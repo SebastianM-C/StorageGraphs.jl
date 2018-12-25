@@ -1,23 +1,24 @@
 module GraphStorage
 
-export add_node!, maxid, get_node_index, add_path!, indexby, plot_graph,
+export add_nodes!, maxid, get_node_index, add_path!, indexby, plot_graph,
     paths_through, on_path, walkpath
 
 using LightGraphs, MetaGraphs
 using GraphPlot
+using Base.Threads
 
 maxid(g) = haskey(g.gprops, :id) ? g.gprops[:id] : 1
 
 """
-    add_node!(g, dep::Pair; id=maxid(g)+1)
+    add_nodes!(g, dep::Pair; id=maxid(g))
 
-Recursively add a node via the dependency chain specified by `dep`.
+Recursively add nodes via the dependency chain specified by `dep`.
 If any intermediarry node doesn't exist, it is created.
 A new path is created starting from the first node to the last one.
 """
-function add_node!(g, dep::Pair; id=maxid(g))
+function add_nodes!(g, dep::Pair; id=maxid(g))
     if dep[2] isa Pair
-        dest = add_node!(g, dep[2], id=id)
+        dest = add_nodes!(g, dep[2], id=id)
     else
         dest = dep[2]
         set_prop!(g, :id, id+1)
@@ -28,11 +29,12 @@ function add_node!(g, dep::Pair; id=maxid(g))
 end
 
 """
-    get_node_index(g, val)
+    get_node_index(g, val; createnew=true)
 
-Get the index of a node identified by a `NamedTuple`. If it doesn't exist, it is created.
+Get the index of a node identified by a `NamedTuple`. If it doesn't exist,
+it can be created.
 """
-function get_node_index(g, val)
+function get_node_index(g, val; createnew=true)
     i = -1
     ki = key_index(g, val)
     if ki isa Nothing
@@ -43,14 +45,14 @@ function get_node_index(g, val)
             end
         end
         if i == -1
-            add_node!(g, val)
+            createnew && add_node!(g, val)
             @debug "Node not found"
             return nv(g)
         end
     else
         k = keys(val)[ki]
         if !haskey(g[k], val[k])
-            add_node!(g, val)
+            createnew && add_node!(g, val)
             @debug "Node not found"
             return nv(g)
         else
@@ -72,7 +74,7 @@ function add_path!(g, source, dest; id=maxid(g))
     if has_edge(g, sv, dv)
         push!(g.eprops[Edge(sv,dv)][:id], id)
     else
-        add_edge!(g, sv, dv, Dict(:id=>Set(id)))
+        add_edge!(g, sv, dv, Dict(:id=>[id]))
     end
 end
 
@@ -104,7 +106,6 @@ key_index(g, val) = findfirst(i -> i ∈ g.indices, keys(val))
 
 function plot_graph(g)
     formatprop(p::Dict) = replace(string(p), "Dict{Symbol,Any}"=>"")
-    formatprop(p::Set) = replace(string(p), "Set"=>"")
     vlabels = [formatprop(g.vprops[i]) for i in vertices(g)]
     elabels = [formatprop(g.eprops[i][:id]) for i in edges(g)]
     gplot(g, nodelabel=vlabels, edgelabel=elabels)
@@ -124,7 +125,7 @@ function paths_through(g, v::Integer; dir=:out)
         in = inneighbors(g, v)
         es = [Edge(i, v) for i in in]
     end
-    union(Set{eltype(g)}(), get_prop.(Ref(g), es, :id)...)
+    union(get_prop.(Ref(g), es, :id)...)
 end
 
 function paths_through(g, dep::Pair; dir=:out)
@@ -132,7 +133,7 @@ function paths_through(g, dep::Pair; dir=:out)
 end
 
 function paths_through(g, val::NamedTuple; dir=:out)
-    paths_through(g, get_node_index(g, val), dir=dir)
+    paths_through(g, get_node_index(g, val, createnew=false), dir=dir)
 end
 
 function paths_through(g, prop, val; dir=:out)
@@ -148,16 +149,27 @@ function on_path(g, v, path)
     !isempty(paths_through(g, v, dir=:in) ∩ path)
 end
 
-function walkpath(g, path::Set, start, neighborfn; stopcond=(g,v)->true)
-    result = Set{eltype(g)}()
-    sizehint!(result, length(path))
-    for p ∈ path
-        push!(result, walkpath(g, p, start, neighborfn, stopcond=stopcond))
+"""
+    walkpath(g, paths, start; dir=:out, stopcond=(g,v)->true)
+
+Walk on the given `paths` starting from `start` and return the last nodes.
+If `dir` is specified, use the corresponding edge direction
+(`:in` and `:out` are acceptable values).
+"""
+function walkpath(g, paths::Vector, start::Integer; dir=:out, stopcond=(g,v)->true)
+    (dir == :out) ? walkpath(g, paths, start, outneighbors, stopcond=stopcond) :
+        walkpath(g, paths, start, inneighbors, stopcond=stopcond)
+end
+
+function walkpath(g, paths::Vector, start::Integer, neighborfn; stopcond=(g,v)->true)
+    result = Vector{eltype(g)}(undef, length(paths))
+    @threads for i ∈ eachindex(paths)
+        result[i] = walkpath(g, paths[i], start, neighborfn, stopcond=stopcond)
     end
     return result
 end
 
-function walkpath(g, path::Integer, start, neighborfn; stopcond=(g,v)->true)
+function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->true)
     while stopcond(g, start)
         neighbors = neighborfn(g, start)
         nexti = findfirst(n->on_path(g, n, path), neighbors)
