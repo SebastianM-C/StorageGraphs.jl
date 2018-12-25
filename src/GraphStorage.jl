@@ -66,7 +66,7 @@ end
 Create a path between the source node and the destination one.
 If the nodes do not exist, they are created.
 """
-function add_path!(sg, source, dest; id=maxid(g))
+function add_path!(g, source, dest; id=maxid(g))
     sv = get_node_index(g, source)
     dv = get_node_index(g, dest)
     if has_edge(g, sv, dv)

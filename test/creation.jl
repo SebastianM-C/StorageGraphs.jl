@@ -1,4 +1,4 @@
-using MetaGraphs
+using LightGraphs, MetaGraphs
 
 @testset "Graph creation" begin
     g = MetaDiGraph()
