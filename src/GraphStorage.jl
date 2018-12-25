@@ -125,7 +125,7 @@ function paths_through(g, v::Integer; dir=:out)
         in = inneighbors(g, v)
         es = [Edge(i, v) for i in in]
     end
-    union(get_prop.(Ref(g), es, :id)...)
+    union(Integer[], get_prop.(Ref(g), es, :id)...)
 end
 
 function paths_through(g, dep::Pair; dir=:out)
