@@ -25,6 +25,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#GraphStorage.add_quantity!-Tuple{Any,Any,Any}",
+    "page": "Home",
+    "title": "GraphStorage.add_quantity!",
+    "category": "method",
+    "text": "add_quantity!(g, dep, vals)\n\nAdd the multiple values (vals) of the things identified by the keys of vals, with the dependency chain given by dep. The values of vals are assumed to be vectors. Each added node will correspond to an element of the vectors. Note: The dependency chain must contain all relevant information for identifying the values.\n\n\n\n\n\n"
+},
+
+{
     "location": "#GraphStorage.get_node_index-Tuple{Any,Any}",
     "page": "Home",
     "title": "GraphStorage.get_node_index",
@@ -61,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "GraphStorage.walkpath",
     "category": "method",
-    "text": "walkpath(g, paths, start; dir=:out, stopcond=(g,v)->true)\n\nWalk on the given paths starting from start and return the last nodes. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
+    "text": "walkpath(g, paths, start; dir=:out, stopcond=(g,v)->false)\n\nWalk on the given paths starting from start and return the last nodes. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
 },
 
 {
@@ -70,6 +78,14 @@ var documenterSearchIndex = {"docs": [
     "title": "GraphStorage.add_node!",
     "category": "method",
     "text": "add_node!(g, val::NamedTuple)\n\nAdd a new node to the storage graph.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#GraphStorage.walkpath!-NTuple{5,Any}",
+    "page": "Home",
+    "title": "GraphStorage.walkpath!",
+    "category": "method",
+    "text": "walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)\n\nWalk on the given path and take an action at each node. The action is specified by a function action!(g, v, neighbors) and it can modify the graph.\n\n\n\n\n\n"
 },
 
 {
