@@ -156,12 +156,12 @@ Walk on the given `paths` starting from `start` and return the last nodes.
 If `dir` is specified, use the corresponding edge direction
 (`:in` and `:out` are acceptable values).
 """
-function walkpath(g, paths::Vector, start::Integer; dir=:out, stopcond=(g,v)->true)
+function walkpath(g, paths::Vector, start::Integer; dir=:out, stopcond=(g,v)->false)
     (dir == :out) ? walkpath(g, paths, start, outneighbors, stopcond=stopcond) :
         walkpath(g, paths, start, inneighbors, stopcond=stopcond)
 end
 
-function walkpath(g, paths::Vector, start::Integer, neighborfn; stopcond=(g,v)->true)
+function walkpath(g, paths::Vector, start::Integer, neighborfn; stopcond=(g,v)->false)
     result = Vector{eltype(g)}(undef, length(paths))
     @threads for i ∈ eachindex(paths)
         result[i] = walkpath(g, paths[i], start, neighborfn, stopcond=stopcond)
@@ -169,8 +169,8 @@ function walkpath(g, paths::Vector, start::Integer, neighborfn; stopcond=(g,v)->
     return result
 end
 
-function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->true)
-    while stopcond(g, start)
+function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->false)
+    while !stopcond(g, start)
         neighbors = neighborfn(g, start)
         nexti = findfirst(n->on_path(g, n, path), neighbors)
         if nexti isa Nothing
