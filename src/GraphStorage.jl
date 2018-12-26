@@ -1,7 +1,7 @@
 module GraphStorage
 
 export add_nodes!, maxid, get_node_index, add_path!, indexby, plot_graph,
-    paths_through, on_path, walkpath
+    paths_through, on_path, walkpath, add_quantity!
 
 using LightGraphs, MetaGraphs
 using GraphPlot
@@ -107,7 +107,7 @@ key_index(g, val) = findfirst(i -> i ∈ g.indices, keys(val))
 function plot_graph(g)
     formatprop(p::Dict) = replace(string(p), "Dict{Symbol,Any}"=>"")
     vlabels = [formatprop(g.vprops[i]) for i in vertices(g)]
-    elabels = [formatprop(g.eprops[i][:id]) for i in edges(g)]
+    elabels = [g.eprops[i][:id] for i in edges(g)]
     gplot(g, nodelabel=vlabels, edgelabel=elabels)
 end
 
@@ -118,12 +118,21 @@ Return a vector of the paths going through the given vertex. If `dir` is specifi
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
 function paths_through(g, v::Integer; dir=:out)
+    v == 0 && return Integer[]
     if dir == :out
         out = outneighbors(g, v)
-        es = [Edge(v, i) for i in out]
+        if isempty(out)
+            return Integer[]
+        else
+            es = [Edge(v, i) for i in out]
+        end
     else
         in = inneighbors(g, v)
-        es = [Edge(i, v) for i in in]
+        if isempty(in)
+            return Integer[]
+        else
+            es = [Edge(i, v) for i in in]
+        end
     end
     union(Integer[], get_prop.(Ref(g), es, :id)...)
 end
@@ -150,7 +159,7 @@ function on_path(g, v, path)
 end
 
 """
-    walkpath(g, paths, start; dir=:out, stopcond=(g,v)->true)
+    walkpath(g, paths, start; dir=:out, stopcond=(g,v)->false)
 
 Walk on the given `paths` starting from `start` and return the last nodes.
 If `dir` is specified, use the corresponding edge direction
@@ -170,8 +179,19 @@ function walkpath(g, paths::Vector, start::Integer, neighborfn; stopcond=(g,v)->
 end
 
 function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->false)
+    walkpath!(g, path, start, neighborfn, (g,v,n)->nothing, stopcond=stopcond)
+end
+
+"""
+    walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)
+
+Walk on the given `path` and take an action at each node. The action is specified
+by a function `action!(g, v, neighbors)` and it can modify the graph.
+"""
+function walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)
     while !stopcond(g, start)
         neighbors = neighborfn(g, start)
+        action!(g, start, neighbors)
         nexti = findfirst(n->on_path(g, n, path), neighbors)
         if nexti isa Nothing
             return start
@@ -179,6 +199,33 @@ function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->
         start = neighbors[nexti]
     end
     return start
+end
+
+function endof(dep)
+    if dep[2] isa Pair
+        return endof(dep[2])
+    else
+        return dep[2]
+    end
+end
+
+"""
+    add_quantity!(g, dep, vals)
+
+Add the multiple values (`vals`) of the things identified by the keys of `vals`,
+with the dependency chain given by `dep`. The values of `vals` are assumed to
+be vectors. Each added node will correspond to an element of the vectors.
+Note: The dependency chain must contain all relevant information for identifying the values.
+"""
+function add_quantity!(g, dep, vals)
+    dep_end = endof(dep)
+    for i in axes(vals[1], 1)
+        add_nodes!(g, dep)
+        # decrease the id to stay on the same path
+        g.gprops[:id] -= 1
+        val = (v[i] for v in vals)
+        add_nodes!(g, dep_end=>NamedTuple{keys(vals)}(val))
+    end
 end
 
 end # module
