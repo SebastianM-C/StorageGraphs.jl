@@ -10,6 +10,59 @@ using Base.Threads
 maxid(g) = haskey(g.gprops, :id) ? g.gprops[:id] : 1
 
 """
+    nextid(g, dep::Pair)
+
+Find the next available id such that a dead end (a node with no outgoing paths)
+along the dependency chain (`dep`) is continued. If there is no such case, it
+gives the maximum id (see [`walkdep`](@ref)).
+"""
+function nextid(g, dep::Pair)
+    dep_end, cpath = walkdep(g, dep)
+    v = get_node_index(g, dep_end, createnew=false)
+    if count(outneighbors(g, v)) > 0
+        return maxid(g)
+    else
+        # what to do if there are multiple path ids?
+        prev = findfirst(n->on_path(g, n, cpath), inneighbors(g, v))
+        e = Edge(prev, v)
+        id = g.eprops[e][:id]
+        return length(id) == 1 ? id[1] : id
+    end
+end
+
+"""
+    function walkdep(g, dep::Pair; stopcond=(g,v)->false)
+
+Walk along the dependency chain, but only on already existing paths, and return
+the last node and the compatible paths.
+"""
+function walkdep(g, dep::Pair; stopcond=(g,v)->false)
+    current_node = dep[1]
+    remaining = dep[2]
+    compatible_paths = paths_through(g, current_node)
+    while !stopcond(g, current_node)
+        p = paths_through(g, current_node)
+        compatible_paths = compatible_paths ∩ p
+        if remaining isa Pair
+            node = remaining[1]
+            if on_path(g, node, p)
+                current_node = node
+            else
+                return current_node, compatible_paths
+            end
+            remaining = remaining[2]
+        else
+            if on_path(g, remaining, p)
+                return remaining, compatible_paths
+            else
+                return current_node, compatible_paths
+            end
+        end
+    end
+    return remaining, compatible_paths
+end
+
+"""
     add_nodes!(g, dep::Pair; id=maxid(g))
 
 Recursively add nodes via the dependency chain specified by `dep`.
@@ -219,13 +272,43 @@ Note: The dependency chain must contain all relevant information for identifying
 """
 function add_quantity!(g, dep, vals)
     dep_end = endof(dep)
-    for i in axes(vals[1], 1)
+    for i in eachindex(values(val[1]))
         add_nodes!(g, dep)
         # decrease the id to stay on the same path
         g.gprops[:id] -= 1
         val = (v[i] for v in vals)
         add_nodes!(g, dep_end=>NamedTuple{keys(vals)}(val))
     end
+end
+
+"""
+    ordered_dependency(a, b, inner_deps...)
+
+Return a vector of dependency chains such that the elements of `a` are linked
+to the ones in `b` in such a way that the order is preserved.
+"""
+function ordered_dependency(a, b, inner_deps...)
+    deps = Pair[]
+    for i in eachindex(values(a[1]), values(b[1]))
+        val = (v[i] for v in a)
+        node_a = NamedTuple{keys(a)}(val)
+        val = (v[i] for v in b)
+        node_b = NamedTuple{keys(b)}(val)
+        push!(deps, foldr(=>, (node_a, inner_deps..., node_b)))
+    end
+    return deps
+end
+
+"""
+    add_derived_values!(g, base_dep, base_val, val, inner_deps...)
+
+Add multiple values such that the elements in `base_val` and `val` are
+linked in such a way that the order is preserved. This is useful when
+one wants to add a vector of values derived from another vector.
+A new path is created for each value.# if the paths from `base_dep`
+"""
+function add_derived_values!(g, base_dep, base_val, val, inner_deps...)
+
 end
 
 end # module
