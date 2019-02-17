@@ -1,3 +1,5 @@
+module Readme
+
 using LightGraphs, MetaGraphs
 using GraphStorage
 
@@ -13,7 +15,7 @@ add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.55,), (E=[10., 25.],))
 
 plot_graph(g)
 using GraphPlot.Compose
-draw(SVG("assets/param_graph.svg", 10cm, 10cm), plot_graph(g))
+draw(SVG("$(@__DIR__)/../assets/param_graph.svg", 10cm, 10cm), plot_graph(g))
 
 using Parameters
 
@@ -43,10 +45,8 @@ function initial_conditions(alg::SecondAlg)
     q₂ = [x ? rand(2) : 10 .+ rand(2) for _=1:n]
     return q₀, q₂
 end
-```
 
-Then adding initial conditions would look like this:
-```julia
+
 dep = (A=1,)=>(D=0.4,)=>(B=0.55,)=>(E=10.,)=>(ic_alg=FirstAlg(2),)
 q₀, q₂ = initial_conditions(FirstAlg(2))
 add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
@@ -56,7 +56,7 @@ q₀, q₂ = initial_conditions(SecondAlg(2, true))
 add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
 
 plot_graph(g)
-draw(SVG("assets/ic_graph.svg", 10cm, 10cm), plot_graph(g))
+draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 10cm, 10cm), plot_graph(g))
 
 abstract type SimulationAlgorithm <: AbstractAlgorithm end
 using LinearAlgebra
@@ -82,7 +82,12 @@ function sim2(q₀, q₂, alg::Alg2)
     return a*[norm(q₀[i] - q₂[i]) for i in axes(q₀, 1)]
 end
 
-l = sim1(q₀, q₂, Alg1())
-m = sim2(q₀, q₂, Alg2())
+ic_dep = ((A=1,),(D=0.4,),(B=0.55,),(E=10.,),(ic_alg=FirstAlg(2),))
+q₀, q₂ = initial_conditions(FirstAlg(2))
+ic = (q₀=q₀, q₂=q₂)
 
-add_dependent_quantity!(g, ic_dep, ic, dep, vals)
+l = (l=sim1(q₀, q₂, Alg1()),)
+
+add_derived_values!(g, ic_dep, ic, l)
+
+end  # module Readme
