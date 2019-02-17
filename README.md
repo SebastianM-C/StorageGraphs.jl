@@ -129,10 +129,19 @@ end
 ```
 To add some simulation results to the graph we can use the following:
 ```julia
-ic_dep = (A=1,)=>(D=0.4,)=>(B=0.55,)=>(E=10.,)=>(ic_alg=FirstAlg(2),)
+ic_dep = ((A=1,),(D=0.4,),(B=0.55,),(E=10.,),(ic_alg=FirstAlg(2),))
 q₀, q₂ = initial_conditions(FirstAlg(2))
+ic = (q₀=q₀, q₂=q₂)
 
-l = sim1(q₀, q₂, Alg1())
+l_alg = (alg=Alg1(),)
 
-
+add_derived_values!(g, ic_dep, ic, l, l_alg)
 ```
+The important part here is the fact that the computed results must
+appear in the same order as in the initial conditions. In a table
+this ordering is taken for granted, but with graphs there is no
+implicit ordering.
+
+At this stage the graph looks like this:
+
+![graph with simulation results](assets/sim_graph.svg)

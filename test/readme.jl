@@ -87,7 +87,11 @@ q₀, q₂ = initial_conditions(FirstAlg(2))
 ic = (q₀=q₀, q₂=q₂)
 
 l = (l=sim1(q₀, q₂, Alg1()),)
+l_alg = (alg=Alg1(),)
 
-add_derived_values!(g, ic_dep, ic, l)
+add_derived_values!(g, ic_dep, ic, l, l_alg)
+
+plot_graph(g)
+draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 10cm, 10cm), plot_graph(g))
 
 end  # module Readme
