@@ -88,13 +88,13 @@ Return a vector of dependency chains such that the elements of `a` are linked
 to the ones in `b` in such a way that the order is preserved.
 """
 function ordered_dependency(a, b, inner_deps...)
-    deps = Pair[]
+    deps = Tuple[]
     for i in eachindex(values(a[1]), values(b[1]))
         val = (v[i] for v in a)
         node_a = NamedTuple{keys(a)}(val)
         val = (v[i] for v in b)
         node_b = NamedTuple{keys(b)}(val)
-        push!(deps, foldr(=>, (node_a, inner_deps..., node_b)))
+        push!(deps, (node_a, inner_deps..., node_b))
     end
     return deps
 end
@@ -105,18 +105,17 @@ end
 Add multiple values such that the elements in `base_val` and `val` are
 linked in such a way that the order is preserved. This is useful when
 one wants to add a vector of values derived from another vector.
+The dependency for the base values (`base_dep`) must be given as a collection
+of `NamedTuple`s instead of a nested `Pair`. Also, any inner dependencies (`inner_deps`)
+must be given as individual `NamedTuple`s.
 A new path is created for each value, but if a part already exists,
 it is continued (see [`nextid`](@ref)).
 """
 function add_derived_values!(g, base_dep, base_val, val, inner_deps...)
     deps = ordered_dependency(base_val, val, inner_deps...)
     for dep in deps
-        add_nodes!(g, base_dep)
-        id = nextid(g, dep)
-        if id == maxid(g)
-            id -= 1
-            g.gprops[:id] -= 1
-        end
-        add_nodes!(g, dep, id=id)
+        full_dep = foldr(=>, (base_dep..., dep...))
+        # @show full_dep
+        add_nodes!(g, full_dep)
     end
 end

@@ -1,11 +1,11 @@
 module GraphStorage
 
-export add_nodes!, nextid, maxid, get_node_index, add_path!, indexby,
-    paths_through, on_path, walkpath, walkdep, add_bulk!, plot_graph
+export add_nodes!, nextid, maxid, indexof, add_path!, indexby,
+    paths_through, on_path, walkpath, walkdep, add_bulk!, add_derived_values!,
+    plot_graph
 
 using LightGraphs, MetaGraphs
 using GraphPlot
-using Base.Threads
 
 include("add.jl")
 include("query.jl")
@@ -22,33 +22,21 @@ gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
-    v = get_node_index(g, dep_end, createnew=false)
+    v = indexof(g, dep_end)
     v == 0 && return 1
     if length(outneighbors(g, v)) > 0
         return maxid(g)
     else
-        # what to do if there are multiple path ids?
         neighbors = inneighbors(g, v)
+        # there is only one possible edge
         previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
         e = Edge(neighbors[previ], v)
         id = g.eprops[e][:id]
-        return length(id) == 1 ? id[1] : id
+        # Can there be multiple path ids?
+        @assert length(id) == 1
+        return id[1]
     end
 end
-
-"""
-    indexby(g, key)
-
-Set `key` as an indexing property.
-"""
-function indexby(g, key)
-    if key ∉ g.indices
-        g.metaindex[key] = Dict{Any,Integer}()
-        push!(g.indices, key)
-    end
-end
-
-key_index(g, val) = findfirst(i -> i ∈ g.indices, keys(val))
 
 function plot_graph(g)
     formatprop(p::Dict) = replace(string(p), "Dict{Symbol,Any}"=>"")

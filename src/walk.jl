@@ -1,3 +1,5 @@
+using Base.Threads
+
 """
     on_path(g, v, path)
 
@@ -16,7 +18,7 @@ the last node and the compatible paths.
 function walkdep(g, dep::Pair; stopcond=(g,v)->false)
     current_node = dep[1]
     remaining = dep[2]
-    compatible_paths = paths_through(g, current_node)
+    compatible_paths = paths_through(g, current_node) ∪ paths_through(g, current_node, dir=:in)
     while !stopcond(g, current_node)
         p = paths_through(g, current_node)
         if remaining isa Pair
