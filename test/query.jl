@@ -1,14 +1,15 @@
 using MetaGraphs
 
-g = MetaDiGraph()
-indexby(g, :B)
-indexby(g, :D)
-dep = [(A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=e,) for e in 1.:3.]
-add_nodes!.(Ref(g), dep)
-dep = [(A=1,)=>(D=0.4,)=>(B=0.6,)=>(E=e,) for e in 1.:3.]
-add_nodes!.(Ref(g), dep)
-
 @testset "Data Query" begin
+    g = MetaDiGraph()
+    indexby(g, :B)
+    indexby(g, :D)
+
+    dep = [(A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=e,) for e in 1.:3.]
+    add_nodes!.(Ref(g), dep)
+    dep = [(A=1,)=>(D=0.4,)=>(B=0.6,)=>(E=e,) for e in 1.:3.]
+    add_nodes!.(Ref(g), dep)
+
     @test props(g, g[:B][0.5])[:B] == 0.5
     @test props(g, g[:B][0.6])[:B] == 0.6
 
