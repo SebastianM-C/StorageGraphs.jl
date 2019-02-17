@@ -8,8 +8,8 @@ indexby(g, :E)
 # We can add the nodes progressively
 add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,))
 # or in bulk
-add_quantity!(g, (A=1,)=>(D=0.4,)=>(B=0.5,), (E=[10., 20., 30.],))
-add_quantity!(g, (A=1,)=>(D=0.4,)=>(B=0.55,), (E=[10., 25.],))
+add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.5,), (E=[10., 20., 30.],))
+add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.55,), (E=[10., 25.],))
 
 plot_graph(g)
 using GraphPlot.Compose
@@ -49,11 +49,11 @@ Then adding initial conditions would look like this:
 ```julia
 dep = (A=1,)=>(D=0.4,)=>(B=0.55,)=>(E=10.,)=>(ic_alg=FirstAlg(2),)
 q₀, q₂ = initial_conditions(FirstAlg(2))
-add_quantity!(g, dep, (q₀=q₀, q₂=q₂))
+add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
 
 dep = (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=10.,)=>(ic_alg=SecondAlg(2, true),)
 q₀, q₂ = initial_conditions(SecondAlg(2, true))
-add_quantity!(g, dep, (q₀=q₀, q₂=q₂))
+add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
 
 plot_graph(g)
 draw(SVG("assets/ic_graph.svg", 10cm, 10cm), plot_graph(g))

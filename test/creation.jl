@@ -18,7 +18,7 @@ end
 @testset "Adding data" begin
     g = MetaDiGraph()
     indexby(g, :B)
-    add_quantity!(g, (A=1,)=>(B=0.4,), (q₀=[[1,2],[2,3]], q₂=[[0,1],[2,4]]))
+    add_bulk!(g, (A=1,)=>(B=0.4,), (q₀=[[1,2],[2,3]], q₂=[[0,1],[2,4]]))
     @test nv(g) == 4
     @test ne(g) == 3
     @test props(g, 1) == Dict(:A=>1)
@@ -29,7 +29,7 @@ end
     @test props(g, 2, 3) == Dict(:id=>[1])
     @test props(g, 2, 4) == Dict(:id=>[2])
 
-    add_quantity!(g, (A=1,)=>(B=0.5,), (q₀=[[-1,2],[-2,3]], q₂=[[0,-1],[2,-4]]))
+    add_bulk!(g, (A=1,)=>(B=0.5,), (q₀=[[-1,2],[-2,3]], q₂=[[0,-1],[2,-4]]))
     @test nv(g) == 7
     @test ne(g) == 6
     @test props(g, 5) == Dict(:B=>0.5)
