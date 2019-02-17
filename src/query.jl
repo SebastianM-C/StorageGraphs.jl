@@ -1,36 +1,48 @@
 """
-    get_node_index(g, val; createnew=true)
+    indexof(g, node; createnew=true)
 
-Get the index of a node identified by a `NamedTuple`. If it doesn't exist,
-it can be created.
+Get the index of a node identified by a `NamedTuple`. If the node doesn't
+exist the next available index can be returned.
 """
-function get_node_index(g, val; createnew=true)
+function indexof(g, node; next=false)
     i = -1
-    ki = key_index(g, val)
+    ki = key_index(g, node)
     if ki isa Nothing
         for (k,v) in g.vprops
-            if v == Dict(pairs(val))
+            if v == Dict(pairs(node))
                 i = k
                 break
             end
         end
         if i == -1
-            createnew && add_node!(g, val)
             @debug "Node not found"
-            return nv(g)
+            return !next ? 0 : nv(g) + 1
         end
     else
-        k = keys(val)[ki]
-        if !haskey(g[k], val[k])
-            createnew && add_node!(g, val)
+        k = keys(node)[ki]
+        if !haskey(g[k], node[k])
             @debug "Node not found"
-            return nv(g)
+            return !next ? 0 : nv(g) + 1
         else
-            i = g[k][val[k]]
+            i = g[k][node[k]]
         end
     end
     return i
 end
+
+"""
+    indexby(g, key)
+
+Set `key` as an indexing property.
+"""
+function indexby(g, key)
+    if key ∉ g.indices
+        g.metaindex[key] = Dict{Any,Integer}()
+        push!(g.indices, key)
+    end
+end
+
+key_index(g, node) = findfirst(i -> i ∈ g.indices, keys(node))
 
 """
     paths_through(g, v::vType; dir=:out) where {vType <: Integer}
@@ -62,8 +74,8 @@ function paths_through(g, dep::Pair; dir=:out)
     intersect(paths_through(g, dep[2], dir=dir), paths_through(g, dep[1], dir=dir))
 end
 
-function paths_through(g, val::NamedTuple; dir=:out)
-    paths_through(g, get_node_index(g, val, createnew=false), dir=dir)
+function paths_through(g, node::NamedTuple; dir=:out)
+    paths_through(g, indexof(g, node), dir=dir)
 end
 
 function paths_through(g, prop, val; dir=:out)

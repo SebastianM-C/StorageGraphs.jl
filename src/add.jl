@@ -25,8 +25,10 @@ Create a path between the source node and the destination one.
 If the nodes do not exist, they are created.
 """
 function add_path!(g, source, dest; id=maxid(g))
-    sv = get_node_index(g, source)
-    dv = get_node_index(g, dest)
+    sv = indexof(g, source, next=true)
+    sv > nv(g) && add_node!(g, source)
+    dv = indexof(g, dest, next=true)
+    dv > nv(g) && add_node!(g, dest)
     if has_edge(g, sv, dv)
         push!(g.eprops[Edge(sv,dv)][:id], id)
         unique!(g.eprops[Edge(sv,dv)][:id])
