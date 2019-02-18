@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.2"
+     width="50mm" height="50mm" viewBox="0 0 50 50"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<defs>
+  <marker id="arrow" markerWidth="15" markerHeight="7" refX="5" refY="3.5" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L15,3.5 L0,7 z" stroke="context-stroke" fill="context-stroke"/>
+  </marker>
+</defs>
+<g stroke-width="1.34" fill="#000000" fill-opacity="0.000" stroke="#D3D3D3" id="img-4a7b6418-1">
+  <g transform="translate(37.21,43.62)">
+    <path fill="none" d="M-6.37,1.64 L 6.37 -1.64" class="primitive"/>
+  </g>
+  <g transform="translate(28.12,39.03)">
+    <path fill="none" d="M0.3,4.48 L -0.3 -4.48" class="primitive"/>
+  </g>
+  <g transform="translate(36.75,36.82)">
+    <path fill="none" d="M7,3.54 L -7 -3.54" class="primitive"/>
+  </g>
+  <g transform="translate(9.65,10.72)">
+    <path fill="none" d="M3.99,4.76 L -3.99 -4.76" class="primitive"/>
+  </g>
+  <g transform="translate(21.4,24.75)">
+    <path fill="none" d="M-4.77,-5.69 L 4.77 5.69" class="primitive"/>
+  </g>
+</g>
+<g stroke-width="1.34" stroke="#D3D3D3" id="img-4a7b6418-2">
+</g>
+<g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-4a7b6418-3">
+</g>
+<g stroke-width="0" stroke="#000000" stroke-opacity="0.000" fill="#40E0D0" id="img-4a7b6418-4">
+  <g transform="translate(28.58,45.83)">
+    <circle cx="0" cy="0" r="2.24" class="primitive"/>
+  </g>
+  <g transform="translate(45.83,41.4)">
+    <circle cx="0" cy="0" r="2.24" class="primitive"/>
+  </g>
+  <g transform="translate(15.14,17.27)">
+    <circle cx="0" cy="0" r="2.24" class="primitive"/>
+  </g>
+  <g transform="translate(4.17,4.17)">
+    <circle cx="0" cy="0" r="2.24" class="primitive"/>
+  </g>
+  <g transform="translate(27.67,32.23)">
+    <circle cx="0" cy="0" r="2.24" class="primitive"/>
+  </g>
+</g>
+<g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-4a7b6418-5">
+</g>
+</svg>

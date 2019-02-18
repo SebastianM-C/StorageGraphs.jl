@@ -7,19 +7,66 @@
 [![Codecov](https://codecov.io/gh/SebastianM-C/GraphStorage.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SebastianM-C/GraphStorage.jl)
 
 This is an _experimental_ package for storing hierarchical data in graphs.
-The data is stored within the properties of the vertices of a directed graph
-(a `MetaDiGraph` from [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl))
-and data points are identified by a path through the graph. A path is a collection
-of edges with the same label (a dictionary with a key `id` corresponding to the
-index of the path).
 
-If one would think of an analogy with a table, the rows of the table correspond
-to a path through the graph.
+### Introduction
+
+In general a graph is a collection of objects with some relations between them.
+If we describe the graph from a mathematical point of view, the objects correspond
+to vertices and the relations to edges. Graphs can be represented by diagrams.
+For example:
+
+|                 Simple graph            |        Simple directed graph
+:----------------------------------------:|:-------------------------------------------:
+![graph example](assets/simple_graph.svg) | ![graph example](assets/simple_digraph.svg)
+
+If the vertices have a direction, we call them directed graphs. We can use graphs
+to store data. To do this we will use a graph and associate metadata to the vertices
+and the edges. Each vertex will contain a data point and each edge will have an
+id, so that we know how data points are connected. We will call a node a vertex
+and its associated metadata and a path will be the collection of all edges with
+the same id. For example if we have `x = [1, 2, 3]`, then the graph looks like this:
+
+![graph example](assets/ex1.svg)
+
+Now, let's consider that we have a function, say `f(x) = x^2`, and we apply it
+to our `x` and want to store the resulting `y = [1, 4, 9]`. We can compare the
+graph and the table representations
+
+![graph example](assets/ex2.svg)
+|  id   |   x   |   y   |
+|-------|-------|-------|
+|   1   |   1   |   1   |
+|   2   |   2   |   4   |
+|   3   |   3   |   9   |
+
+We can see that a row in the table corresponds to a path in the graph and a column
+in the table would be the collection of nodes with the same keys.
+
+### Implementation
+
+In this package we use `NamedTuple`s to specify the information contained in the nodes.
+If we want to add more than one value corresponding to the same name (or symbol),
+we can specify the values as a vector. For example, for generating the above graph
+we can use:
+
+```julia
+using MetaGraphs, GraphStorage
+
+g = MetaDiGraph()
+add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
+```
+
+Note: `NamedTuple`s with a single element must use a comma.
+(`(a=1,)` is not the same as `(a=1)`)
+
+This package used a `MetaDiGraph` from [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl)
+for the graph and metadata. The metadata is stored in dictionaries with the keys
+being given by vertices or edges.
 
 ## Tutorial and motivation
 
 Let us consider that we have some simulation data with the following structure:
-* simulation parameters: tow constant parameters `A` and `D`, a variable parameter `B`.
+* simulation parameters: `P`  which takes a value or each simulation.
 * physical parameters: for each simulation parameter we have an `E`.
 * initial conditions: for each combination of parameters we have an algorithm that
 generates some initial conditions. The algorithm itself also has some parameters and
