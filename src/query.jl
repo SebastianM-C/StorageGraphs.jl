@@ -5,16 +5,11 @@ Get the index of a node identified by a `NamedTuple`. If the node doesn't
 exist the next available index can be returned.
 """
 function indexof(g, node; next=false)
-    i = -1
+    i = nothing
     ki = key_index(g, node)
     if ki isa Nothing
-        for (k,v) in g.vprops
-            if v == Dict(pairs(node))
-                i = k
-                break
-            end
-        end
-        if i == -1
+        i = findfirst(v->v == Dict(pairs(node)), g.vprops)
+        if i isa Nothing
             @debug "Node not found"
             return !next ? 0 : nv(g) + 1
         end

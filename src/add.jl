@@ -111,11 +111,19 @@ must be given as individual `NamedTuple`s.
 A new path is created for each value, but if a part already exists,
 it is continued (see [`nextid`](@ref)).
 """
-function add_derived_values!(g, base_dep, base_val, val, inner_deps...)
+function add_derived_values!(g, base_dep, base_val::NamedTuple, val::NamedTuple, inner_deps...)
     deps = ordered_dependency(base_val, val, inner_deps...)
     for dep in deps
         full_dep = foldr(=>, (base_dep..., dep...))
         # @show full_dep
+        add_nodes!(g, full_dep)
+    end
+end
+
+function add_derived_values!(g, base_val::NamedTuple, val::NamedTuple, inner_deps...)
+    deps = ordered_dependency(base_val, val, inner_deps...)
+    for dep in deps
+        full_dep = foldr(=>, dep)
         add_nodes!(g, full_dep)
     end
 end

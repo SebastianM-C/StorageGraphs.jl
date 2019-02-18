@@ -23,7 +23,7 @@ gives the maximum id (see [`walkdep`](@ref)).
 function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
     v = indexof(g, dep_end)
-    v == 0 && return 1
+    v == 0 && return maxid(g)
     if length(outneighbors(g, v)) > 0
         return maxid(g)
     else
@@ -38,11 +38,11 @@ function nextid(g, dep::Pair)
     end
 end
 
-function plot_graph(g)
+function plot_graph(g; args...)
     formatprop(p::Dict) = replace(string(p), "Dict{Symbol,Any}"=>"")
     vlabels = [formatprop(g.vprops[i]) for i in vertices(g)]
     elabels = [g.eprops[i][:id] for i in edges(g)]
-    gplot(g, nodelabel=vlabels, edgelabel=elabels)
+    gplot(g; nodelabel=vlabels, edgelabel=elabels, args...)
 end
 
 end # module
