@@ -29,10 +29,13 @@ the same id. For example if we have `x = [1, 2, 3]`, then the graph looks like t
 ![graph example](assets/ex1.svg)
 
 Now, let's consider that we have a function, say `f(x) = x^2`, and we apply it
-to our `x` and want to store the resulting `y = [1, 4, 9]`. We can compare the
+to our `x` and want to store the resulting `y = [1, 4, 9]`. We encode
+the fact that `y` was derived / computed from `x` by using edges
+oriented from the `x` nodes to the `y` nodes. We can compare the
 graph and the table representations
 
 ![graph example](assets/ex2.svg)
+
 |  id   |   x   |   y   |
 |-------|-------|-------|
 |   1   |   1   |   1   |
