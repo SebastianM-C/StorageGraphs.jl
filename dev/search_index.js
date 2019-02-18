@@ -17,7 +17,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#GraphStorage.add_derived_values!-Tuple{Any,Any,Any,Any,Vararg{Any,N} where N}",
+    "location": "#GraphStorage.add_derived_values!-Tuple{Any,Any,NamedTuple,NamedTuple,Vararg{Any,N} where N}",
     "page": "Home",
     "title": "GraphStorage.add_derived_values!",
     "category": "method",
