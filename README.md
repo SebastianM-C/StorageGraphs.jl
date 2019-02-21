@@ -56,6 +56,8 @@ we can use:
 using MetaGraphs, GraphStorage
 
 g = MetaDiGraph()
+indexby(g, :x)
+indexby(g, :y)
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 ```
 
@@ -64,74 +66,57 @@ Note: `NamedTuple`s with a single element must use a comma.
 
 This package used a `MetaDiGraph` from [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl)
 for the graph and metadata. The metadata is stored in dictionaries with the keys
-being given by vertices or edges.
+being given by vertices or edges. There are two ways of querying the data in the
+graph: by using indexing and by using the relationships with other nodes.
+
+- For the first kind, we must use `indexby(g, :name)` before adding any node identified
+by `:name`. This will create an entry in the metaindices of the graph, which is
+a dictionary that maps the stored values to the vertex indices. As an example,
+to access all the nodes with the name `x` in the above graph we can use
+`keys(g[:x])`.
+
+- The other way of accessing the data would be by relying on the structure of
+the graph. For example we can get the vertex indices of all the neighbors of
+a node and use that to get the values. This would be equivalent with a query
+based on the parent node. This is useful with more complicated graph structures,
+so an example will be provided later.
 
 ## Tutorial and motivation
 
 Let us consider that we have some simulation data with the following structure:
 * simulation parameters: `P`  which takes a value or each simulation.
-* physical parameters: for each simulation parameter we have an `E`.
-* initial conditions: for each combination of parameters we have an algorithm that
-generates some initial conditions. The algorithm itself also has some parameters and
-their number may vary depending on the algorithm. The for each combination of parameters
-and choice of algorithm we have a number of initial conditions.
+* initial conditions: for each `P` we have an algorithm that generates some
+initial conditions. The algorithm itself may have parameters.
 * simulation results: for each initial conditions the simulation produces some results
-(in 1-to-1 correspondence with the initial conditions).
+(we can think of this as being a function of the initial conditions as illustrated
+in the Introduction).
 
-We will now progressively build up the graph.
-For the parameters `A`, `D`, `B` and `E` we will use some nodes connected in
-such away that it reflects their dependence. More concretely
+We will now progressively build up the graph. Let's say that the first simulation
+has `P=1` and using `"alg1"` we generated some initial conditions (`x`).
 
 ```julia
 using LightGraphs, MetaGraphs
 using GraphStorage
 
 g = MetaDiGraph()
-indexby(g, :B)
-indexby(g, :E)
+indexby(g, :P)
 
-# We can add the nodes progressively
-add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,))
+# We can add the nodes one by one
+add_nodes!(g, (P=1,)=>(alg="alg1",))
 # or in bulk
-add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.5,), (E=[10., 20., 30.],))
-add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.55,), (E=[10., 25.],))
+add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
 ```
 Up to this point the graph looks like this:
 
 ![graph with parameters](assets/param_graph.svg)
 
-Next, for the initial conditions we will use a node for the algorithm and one
-for each of the produced values.
-Suppose that we have the following initial conditions algorithms:
+For the initial conditions we used a node for the algorithm (containing the name)
+and one for each of the produced values. Next, we will obtain our simulation results
+and add them to the graph.
 ```julia
-using Parameters
-
-abstract type AbstractAlgorithm end
-abstract type InitialConditionsAlgorithm <: AbstractAlgorithm end
-
-@with_kw struct FirstAlg <: InitialConditionsAlgorithm
-    n::Int
-    @assert n > 0
-end
-
-@with_kw struct SecondAlg <: InitialConditionsAlgorithm
-    n::Int
-    x::Bool
-end
-
-function initial_conditions(alg::FirstAlg)
-    n = alg.n
-    q₀ = [rand(2) for _=1:n]
-    q₂ = [rand(2) for _=1:n]
-    return q₀, q₂
-end
-
-function initial_conditions(alg::SecondAlg)
-    @unpack n, x = alg
-    q₀ = [x ? rand(2) : 10 .+ rand(2) for _=1:n]
-    q₂ = [x ? rand(2) : 10 .+ rand(2) for _=1:n]
-    return q₀, q₂
-end
+x = keys(g[:x]) # retrieve the previously stored initial conditions
+results = simulation(x)
+add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 ```
 
 Then adding initial conditions would look like this:
