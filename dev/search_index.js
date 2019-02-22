@@ -41,6 +41,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#GraphStorage.final_neighborhs-Tuple{Any,Pair}",
+    "page": "Home",
+    "title": "GraphStorage.final_neighborhs",
+    "category": "method",
+    "text": "final_neighborhs(g, dep::Pair; dir=:out)\n\nReturn the vertex indices for the neighbors at the end of the dependency chain.\n\n\n\n\n\n"
+},
+
+{
     "location": "#GraphStorage.indexby-Tuple{Any,Any}",
     "page": "Home",
     "title": "GraphStorage.indexby",
