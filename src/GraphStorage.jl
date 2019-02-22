@@ -2,7 +2,7 @@ module GraphStorage
 
 export add_nodes!, nextid, maxid, indexof, add_path!, indexby,
     paths_through, on_path, walkpath, walkdep, add_bulk!, add_derived_values!,
-    plot_graph
+    final_neighborhs, plot_graph
 
 using LightGraphs, MetaGraphs
 using GraphPlot
