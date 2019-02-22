@@ -108,7 +108,7 @@ add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
 ```
 Up to this point the graph and the equivalent table are presented below:
 
-![graph with parameters](assets/ic_graph.svg)
+![graph with initial conditions](assets/ic_graph.svg)
 
 | id | P | alg  | x |
 |----|---|------|---|
@@ -131,10 +131,28 @@ the initial conditions depend on the previously stored parameters
 and we retrieved them as the neighbors in the graph.
 After this step we have
 
-![graph with parameters](assets/ic_graph.svg)
+![graph with simulation results](assets/sim_graph.svg)
 
 | id | P | alg  | x | r |
 |----|---|------|---|---|
 | 1  | 1 |"alg1"|10.|12.|
 | 2  | 1 |"alg1"|20.|22.|
 | 3  | 1 |"alg1"|30.|32.|
+
+Now consider what would happen if in a second simulation we would have
+`P=2`, but still `"alg1"`. As we can see with increasing complexity
+the columns corresponding to simulation parameters or metadata would
+contain a lot of redundant information. In the graph we can only store
+them once and keep track of things through paths. This is the main
+motivation for this package.
+
+![graph with more data](assets/complicated_graph.svg)
+
+| id | P | alg  | x | r |
+|----|---|------|---|---|
+| 1  | 1 |"alg1"|10.|12.|
+| 2  | 1 |"alg1"|20.|22.|
+| 3  | 1 |"alg1"|30.|32.|
+| 4  | 2 |"alg1"|20.|24.|
+| 5  | 2 |"alg1"|40.|44.|
+| 6  | 2 |"alg1"|60.|64.|

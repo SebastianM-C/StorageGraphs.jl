@@ -33,7 +33,7 @@ add_nodes!(g, (P=1,)=>(alg="alg1",))
 add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
 
 plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 12cm, 4cm),
+draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 12cm, 4.5cm),
     plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
 
 simulation(x; alg) = alg == "alg1" ? x.+2 : x.^2
@@ -44,5 +44,11 @@ results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 
 plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 12cm, 4cm),
+draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 12cm, 6cm),
+    plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
+
+add_derived_values!(g, ((P=2,),(alg="alg1",)), (x=2x,), (r=2results,))
+
+plot_graph(g)
+draw(SVG("$(@__DIR__)/../assets/complicated_graph.svg", 12cm, 10cm),
     plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
