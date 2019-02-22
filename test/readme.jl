@@ -14,18 +14,16 @@ g.vprops[3] = Dict(:x=>3)
 draw(SVG("$(@__DIR__)/../assets/ex1.svg", 12cm, 4cm),
     plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
 
-g = MetaDiGraph()
+g = StorageGraph()
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 
 plot_graph(g, layout=layout, nodesize=ns)
 draw(SVG("$(@__DIR__)/../assets/ex2.svg", 12cm, 4cm),
     plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
 
-using LightGraphs, MetaGraphs
 using GraphStorage
 
-g = MetaDiGraph()
-indexby.(Ref(g), [:P, :alg])
+g = StorageGraph()
 
 # We can add the nodes one by one
 add_nodes!(g, (P=1,)=>(alg="alg1",))
@@ -39,7 +37,7 @@ draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 12cm, 4.5cm),
 simulation(x; alg) = alg == "alg1" ? x.+2 : x.^2
 
 # retrieve the previously stored initial conditions
-x = [g.vprops[v][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
+x = [g.vprops[v][:data][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 

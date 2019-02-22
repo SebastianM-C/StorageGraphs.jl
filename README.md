@@ -6,7 +6,9 @@
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/SebastianM-C/GraphStorage.jl?svg=true)](https://ci.appveyor.com/project/SebastianM-C/GraphStorage-jl)
 [![Codecov](https://codecov.io/gh/SebastianM-C/GraphStorage.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SebastianM-C/GraphStorage.jl)
 
-This is an _experimental_ package for storing hierarchical data in graphs.
+This is an _experimental_ package for storing hierarchical data in graphs in a non-redundant way.
+This package aims to be useful when one has a combination of data and metadata or parameters
+and the use of tables would lead to a lot of redundancy in the corresponding columns.
 
 ### Introduction
 
@@ -53,11 +55,9 @@ we can specify the values as a vector. For example, for generating the above gra
 we can use:
 
 ```julia
-using MetaGraphs, GraphStorage
+using GraphStorage
 
-g = MetaDiGraph()
-indexby(g, :x)
-indexby(g, :y)
+g = StorageGraph()
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 ```
 
@@ -69,11 +69,11 @@ for the graph and metadata. The metadata is stored in dictionaries with the keys
 being given by vertices or edges. There are two ways of querying the data in the
 graph: by using indexing and by using the relationships with other nodes.
 
-- For the first kind, we must use `indexby(g, :name)` before adding any node identified
+- For the first kind, ~~we must use `indexby(g, :name)` before adding any node identified
 by `:name`. This will create an entry in the metaindices of the graph, which is
 a dictionary that maps the stored values to the vertex indices. As an example,
 to access all the nodes with the name `x` in the above graph we can use
-`keys(g[:x])`.
+`keys(g[:x])`~~.
 
 - The other way of accessing the data would be by relying on the structure of
 the graph. For example we can get the vertex indices of all the neighbors of
@@ -95,11 +95,9 @@ We will now progressively build up the graph. Let's say that the first simulatio
 has `P=1` and using `"alg1"` we generated some initial conditions (`x`).
 
 ```julia
-using LightGraphs, MetaGraphs
 using GraphStorage
 
-g = MetaDiGraph()
-indexby(g, :P)
+g = StorageGraph()
 
 # We can add the nodes one by one
 add_nodes!(g, (P=1,)=>(alg="alg1",))
@@ -121,7 +119,7 @@ and one for each of the produced values. Next, we will obtain our simulation res
 and add them to the graph.
 ```julia
 # retrieve the previously stored initial conditions
-x = [g.vprops[v][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
+x = [g.vprops[v][:data][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 ```

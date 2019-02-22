@@ -1,8 +1,8 @@
 module GraphStorage
 
-export add_nodes!, nextid, maxid, indexof, add_path!, indexby,
-    paths_through, on_path, walkpath, walkdep, add_bulk!, add_derived_values!,
-    final_neighborhs, plot_graph
+export StorageGraph, add_nodes!, nextid, maxid, add_derived_values!, add_path!,
+    add_bulk!, paths_through, on_path, walkpath, walkdep, final_neighborhs,
+    plot_graph
 
 using LightGraphs, MetaGraphs
 using GraphPlot
@@ -10,6 +10,12 @@ using GraphPlot
 include("add.jl")
 include("query.jl")
 include("walk.jl")
+
+function StorageGraph()
+    g = MetaDiGraph()
+    set_indexing_prop!(g, :data)
+    return g
+end
 
 maxid(g) = haskey(g.gprops, :id) ? g.gprops[:id] : 1
 
@@ -22,8 +28,8 @@ gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
-    v = indexof(g, dep_end)
-    v == 0 && return maxid(g)
+    haskey(g[:data], end_dep) && return maxid(g)
+    v = g[dep_end, :data]
     if length(outneighbors(g, v)) > 0
         return maxid(g)
     else
@@ -32,7 +38,9 @@ function nextid(g, dep::Pair)
         previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
         e = Edge(neighbors[previ], v)
         id = g.eprops[e][:id]
-        # Can there be multiple path ids?
+        # There cannot be more than one path since ids are unique and a different
+        # path id would be neended only if there were a difference "further down"
+        # the graph, but this is not the case since this node has no outgoing paths.
         @assert length(id) == 1
         return id[1]
     end

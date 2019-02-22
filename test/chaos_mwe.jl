@@ -3,9 +3,7 @@ module Chaos_MWE
 using LightGraphs, MetaGraphs
 using GraphStorage
 
-g = MetaDiGraph()
-indexby(g, :B)
-indexby(g, :E)
+g = StorageGraph()
 
 # We can add the nodes progressively
 add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,))
