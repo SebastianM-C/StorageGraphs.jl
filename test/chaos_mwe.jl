@@ -1,4 +1,4 @@
-module Readme
+module Chaos_MWE
 
 using LightGraphs, MetaGraphs
 using GraphStorage
@@ -15,7 +15,7 @@ add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.55,), (E=[10., 25.],))
 
 plot_graph(g)
 using GraphPlot.Compose
-draw(SVG("$(@__DIR__)/../assets/param_graph.svg", 10cm, 10cm), plot_graph(g))
+# draw(SVG("$(@__DIR__)/../assets/param_graph.svg", 10cm, 10cm), plot_graph(g))
 
 using Parameters
 
@@ -55,8 +55,8 @@ dep = (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=10.,)=>(ic_alg=SecondAlg(2, true),)
 q₀, q₂ = initial_conditions(SecondAlg(2, true))
 add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
 
-plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 10cm, 10cm), plot_graph(g))
+# plot_graph(g)
+# draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 10cm, 10cm), plot_graph(g))
 
 abstract type SimulationAlgorithm <: AbstractAlgorithm end
 using LinearAlgebra
@@ -91,7 +91,7 @@ l_alg = (alg=Alg1(),)
 
 add_derived_values!(g, ic_dep, ic, l, l_alg)
 
-plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 10cm, 10cm), plot_graph(g))
+# plot_graph(g)
+# draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 10cm, 10cm), plot_graph(g))
 
-end  # module Readme
+end  # module Chaos_MWE

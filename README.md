@@ -106,77 +106,35 @@ add_nodes!(g, (P=1,)=>(alg="alg1",))
 # or in bulk
 add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
 ```
-Up to this point the graph looks like this:
+Up to this point the graph and the equivalent table are presented below:
 
-![graph with parameters](assets/param_graph.svg)
+![graph with parameters](assets/ic_graph.svg)
+
+| id | P | alg  | x |
+|----|---|------|---|
+| 1  | 1 |"alg1"|10.|
+| 2  | 1 |"alg1"|20.|
+| 3  | 1 |"alg1"|30.|
 
 For the initial conditions we used a node for the algorithm (containing the name)
 and one for each of the produced values. Next, we will obtain our simulation results
 and add them to the graph.
 ```julia
-x = keys(g[:x]) # retrieve the previously stored initial conditions
-results = simulation(x)
+# retrieve the previously stored initial conditions
+x = [g.vprops[v][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
+results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 ```
 
-Then adding initial conditions would look like this:
-```julia
-dep = (A=1,)=>(D=0.4,)=>(B=0.55,)=>(E=10.,)=>(ic_alg=FirstAlg(2),)
-q₀, q₂ = initial_conditions(FirstAlg(2))
-add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
+Here we presented another way of querying the graph. We used the fact
+the initial conditions depend on the previously stored parameters
+and we retrieved them as the neighbors in the graph.
+After this step we have
 
-dep = (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=10.,)=>(ic_alg=SecondAlg(2, true),)
-q₀, q₂ = initial_conditions(SecondAlg(2, true))
-add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
-```
-As an observation, the use of a node containing the whole `struct` instead of
-individual nodes for each property is that it creates namespace separation.
-At this point the graph looks like this:
+![graph with parameters](assets/ic_graph.svg)
 
-![graph with initial conditions](assets/ic_graph.svg)
-
-Next, we pass to simulation results. We will again use a node for the algorithm
-and one for each of the results. Let's consider that we have the following algorithms:
-```julia
-abstract type SimulationAlgorithm <: AbstractAlgorithm end
-using LinearAlgebra
-
-@with_kw struct Alg1{R <: Real} <: SimulationAlgorithm @deftype R
-    a = 10.
-    b = 0.1
-end
-
-@with_kw struct Alg2{R <: Real} <: SimulationAlgorithm @deftype R
-    a = 100.
-end
-
-function sim1(q₀, q₂, alg::Alg1)
-    @unpack a, b = alg
-    @assert axes(q₀) == axes(q₂)
-    return [(a.*q₀[i]) ⋅ (b.*q₂[i]) for i in axes(q₀, 1)]
-end
-
-function sim2(q₀, q₂, alg::Alg2)
-    a = alg.a
-    @assert axes(q₀) == axes(q₂)
-    return a*[norm(q₀[i] - q₂[i]) for i in axes(q₀, 1)]
-end
-```
-To add some simulation results to the graph we can use the following:
-```julia
-ic_dep = ((A=1,),(D=0.4,),(B=0.55,),(E=10.,),(ic_alg=FirstAlg(2),))
-q₀, q₂ = initial_conditions(FirstAlg(2))
-ic = (q₀=q₀, q₂=q₂)
-
-l_alg = (alg=Alg1(),)
-
-add_derived_values!(g, ic_dep, ic, l, l_alg)
-```
-The important part here is the fact that the computed results must
-appear in the same order as in the initial conditions. In a table
-this ordering is taken for granted, but with graphs there is no
-implicit ordering.
-
-At this stage the graph looks like this:
-
-![graph with simulation results](assets/sim_graph.svg)
+| id | P | alg  | x | r |
+|----|---|------|---|---|
+| 1  | 1 |"alg1"|10.|12.|
+| 2  | 1 |"alg1"|20.|22.|
+| 3  | 1 |"alg1"|30.|32.|

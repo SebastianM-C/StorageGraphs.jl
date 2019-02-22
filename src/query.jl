@@ -76,3 +76,13 @@ end
 function paths_through(g, prop, val; dir=:out)
     paths_through(g, g[prop][val], dir=dir)
 end
+
+"""
+    final_neighborhs(g, dep::Pair; dir=:out)
+
+Return the vertex indices for the neighbors at the end of the dependency chain.
+"""
+function final_neighborhs(g, dep::Pair; dir=:out)
+    v = indexof(g, endof(dep))
+    dir == :out ? outneighbors(g, v) : inneighbors(g, v)
+end
