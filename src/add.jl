@@ -25,9 +25,9 @@ Create a path between the source node and the destination one.
 If the nodes do not exist, they are created.
 """
 function add_path!(g, source, dest; id=maxid(g))
-    sv = indexof(g, source, next=true)
+    sv = haskey(g[:data], source) ? g[source, :data] : nv(g) + 1
     sv > nv(g) && add_node!(g, source)
-    dv = indexof(g, dest, next=true)
+    dv = haskey(g[:data], dest) ? g[dest, :data] : nv(g) + 1
     dv > nv(g) && add_node!(g, dest)
     if has_edge(g, sv, dv)
         push!(g.eprops[Edge(sv,dv)][:id], id)
@@ -44,9 +44,7 @@ Add a new node to the storage graph.
 """
 function add_node!(g, val::NamedTuple)
     add_vertex!(g)
-    for (k,v) in pairs(val)
-        set_prop!(g, nv(g), k, v)
-    end
+    set_prop!(g, nv(g), :data, val)
 end
 
 function endof(dep)

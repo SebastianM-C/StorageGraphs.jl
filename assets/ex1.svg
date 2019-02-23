@@ -20,30 +20,30 @@
 <g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-8e2a86a6-3">
 </g>
 <g stroke-width="0" stroke="#000000" stroke-opacity="0.000" fill="#40E0D0" id="img-8e2a86a6-4">
-  <g transform="translate(19.78,36.67)">
+  <g transform="translate(110,19.76)">
     <circle cx="0" cy="0" r="6.93" class="primitive"/>
   </g>
   <g transform="translate(10,3.33)">
     <circle cx="0" cy="0" r="6.93" class="primitive"/>
   </g>
-  <g transform="translate(110,16.94)">
+  <g transform="translate(11.19,36.67)">
     <circle cx="0" cy="0" r="6.93" class="primitive"/>
   </g>
 </g>
 <g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-8e2a86a6-5">
-  <g transform="translate(19.78,36.67)">
+  <g transform="translate(110,19.76)">
     <g class="primitive">
-      <text text-anchor="middle" dy="0.35em">(:x=>1)</text>
+      <text text-anchor="middle" dy="0.35em">(x = 1,)</text>
     </g>
   </g>
   <g transform="translate(10,3.33)">
     <g class="primitive">
-      <text text-anchor="middle" dy="0.35em">(:x=>2)</text>
+      <text text-anchor="middle" dy="0.35em">(x = 2,)</text>
     </g>
   </g>
-  <g transform="translate(110,16.94)">
+  <g transform="translate(11.19,36.67)">
     <g class="primitive">
-      <text text-anchor="middle" dy="0.35em">(:x=>3)</text>
+      <text text-anchor="middle" dy="0.35em">(x = 3,)</text>
     </g>
   </g>
 </g>

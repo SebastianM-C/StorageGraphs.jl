@@ -22,7 +22,6 @@ function walkdep(g, dep::Pair; stopcond=(g,v)->false)
     while !stopcond(g, current_node)
         p = paths_through(g, current_node)
         if remaining isa Pair
-            # @show compatible_paths
             node = remaining[1]
             if on_path(g, node, p)
                 current_node = node
