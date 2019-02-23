@@ -1,27 +1,27 @@
 """
-    paths_through(g, v::vType; dir=:out) where {vType <: Integer}
+    paths_through(g, v::Integer; dir=:out)
 
 Return a vector of the paths going through the given vertex. If `dir` is specified,
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
-function paths_through(g, v::vType; dir=:out) where {vType <: Integer}
-    v == 0 && return vType[]
+function paths_through(g, v::Integer; dir=:out)
+    v == 0 && return Int[]
     if dir == :out
         out = outneighbors(g, v)
         if isempty(out)
-            return vType[]
+            return Int[]
         else
             es = [Edge(v, i) for i in out]
         end
     else
         in = inneighbors(g, v)
         if isempty(in)
-            return vType[]
+            return Int[]
         else
             es = [Edge(i, v) for i in in]
         end
     end
-    union(vType[], get_prop.(Ref(g), es, :id)...)
+    union(Int[], get_prop.(Ref(g), es, :id)...)
 end
 
 function paths_through(g, dep::Pair; dir=:out)
@@ -29,6 +29,7 @@ function paths_through(g, dep::Pair; dir=:out)
 end
 
 function paths_through(g, node::NamedTuple; dir=:out)
+    !haskey(g[:data], node) && return Int[]
     paths_through(g, g[node, :data], dir=dir)
 end
 

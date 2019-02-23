@@ -25,9 +25,9 @@ Create a path between the source node and the destination one.
 If the nodes do not exist, they are created.
 """
 function add_path!(g, source, dest; id=maxid(g))
-    sv = haskey(g, source) ? g[source, :data] : nv(g) + 1
+    sv = haskey(g[:data], source) ? g[source, :data] : nv(g) + 1
     sv > nv(g) && add_node!(g, source)
-    dv = haskey(g, dest) ? g[dest, :data] : nv(g) + 1
+    dv = haskey(g[:data], dest) ? g[dest, :data] : nv(g) + 1
     dv > nv(g) && add_node!(g, dest)
     if has_edge(g, sv, dv)
         push!(g.eprops[Edge(sv,dv)][:id], id)

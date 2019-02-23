@@ -20,7 +20,6 @@ using LightGraphs, MetaGraphs
     @test nextid(g, dep2) == 2
     @test nextid(g, dep3) == 2
     @test nextid(g, dep3) == 2
-    @test :B ∈ g.indices
 end
 
 @testset "Adding data proggresively" begin
@@ -52,7 +51,7 @@ end
         @test nv(g) == 8
         @test ne(g) == 7
         @test props(g, 6) == Dict(:data=>(B=0.5,))
-        @test props(g, 7) == Dict(:data=>(q₀=[0,-1],q₂=>[2,-1]))
+        @test props(g, 7) == Dict(:data=>(q₀=[0,-1],q₂=[2,-1]))
         @test props(g, 8) == Dict(:data=>(q₀=[0,-2],q₂=[2,-2]))
         @test props(g, 1, 6) == Dict(:id=>[4,5])
         @test props(g, 6, 7) == Dict(:id=>[4])

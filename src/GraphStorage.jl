@@ -28,7 +28,7 @@ gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
-    haskey(g[:data], end_dep) && return maxid(g)
+    !haskey(g[:data], dep_end) && return maxid(g)
     v = g[dep_end, :data]
     if length(outneighbors(g, v)) > 0
         return maxid(g)
