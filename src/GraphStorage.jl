@@ -47,8 +47,7 @@ function nextid(g, dep::Pair)
 end
 
 function plot_graph(g; args...)
-    formatprop(p::Dict) = replace(string(p), "Dict{Symbol,Any}"=>"")
-    vlabels = [formatprop(g.vprops[i]) for i in vertices(g)]
+    vlabels = [g.vprops[i][:data] for i in vertices(g)]
     elabels = [g.eprops[i][:id] for i in edges(g)]
     gplot(g; nodelabel=vlabels, edgelabel=elabels, args...)
 end
