@@ -12,7 +12,7 @@ g.vprops[2] = Dict(:x=>2)
 g.vprops[3] = Dict(:x=>3)
 
 draw(SVG("$(@__DIR__)/../assets/ex1.svg", 12cm, 4cm),
-    plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
+    gplot(g, nodelabel=[(x=1,),(x=2,),(x=3,)], layout=layout, nodesize=ns))
 
 g = StorageGraph()
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
