@@ -69,14 +69,15 @@ for the graph and metadata. The metadata is stored in dictionaries with the keys
 being given by vertices or edges. There are two ways of querying the data in the
 graph: by using indexing and by using the relationships with other nodes.
 
-- For the first kind, ~~we must use `indexby(g, :name)` before adding any node identified
-by `:name`. This will create an entry in the metaindices of the graph, which is
-a dictionary that maps the stored values to the vertex indices. As an example,
-to access all the nodes with the name `x` in the above graph we can use
-`keys(g[:x])`~~.
+- For the first kind, we can use `findnodes(g, :name)` to get an array of
+`NamedTuple`s representing the nodes containing the desired symbol. For example
+`findnodes(g, :x)` would return `[(x=1,),(x=2,),(x=3,)]` for the above graph.
+If we want to obtain an array with the values we can use `nodevals(g, :name)`
+instead. With the above example this would be `nodevals(g, :x)` and it would
+give `[1,2,3]` as expected.
 
-- The other way of accessing the data would be by relying on the structure of
-the graph. For example we can get the vertex indices of all the neighbors of
+- The other way of accessing the data would be by taking advantage of the graph
+structure. For example we can get the vertex indices of all the neighbors of
 a node and use that to get the values. This would be equivalent with a query
 based on the parent node. This is useful with more complicated graph structures,
 so an example will be provided later.

@@ -42,3 +42,31 @@ function final_neighborhs(g, dep::Pair; dir=:out)
     v = g[endof(dep), :data]
     dir == :out ? outneighbors(g, v) : inneighbors(g, v)
 end
+
+"""
+    findnodes(g, name::Symbol)
+
+Finds the nodes containing `name`.
+"""
+function findnodes(g, name::Symbol)
+    findall(v -> haskey(g.vprops[v][:data], name), g[:data])
+end
+
+"""
+    extractvals(nodes, name)
+
+Return an array of values corresponding to `name` form the array of `NamedTuple`s
+`nodes`.
+"""
+function extractvals(nodes, name)
+    [n[name] for n in nodes]
+end
+
+"""
+    nodevals(g, name::Symbol)
+
+Return an array of the values corresponding to `name`. See also [`findnodes`](@ref).
+"""
+function nodevals(g, name::Symbol)
+    extractvals(findnodes(g, name), name)
+end
