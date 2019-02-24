@@ -49,19 +49,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#GraphStorage.indexby-Tuple{Any,Any}",
+    "location": "#GraphStorage.findnodes-Tuple{Any,Symbol}",
     "page": "Home",
-    "title": "GraphStorage.indexby",
+    "title": "GraphStorage.findnodes",
     "category": "method",
-    "text": "indexby(g, key)\n\nSet key as an indexing property.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#GraphStorage.indexof-Tuple{Any,Any}",
-    "page": "Home",
-    "title": "GraphStorage.indexof",
-    "category": "method",
-    "text": "indexof(g, node; createnew=true)\n\nGet the index of a node identified by a NamedTuple. If the node doesn\'t exist the next available index can be returned.\n\n\n\n\n\n"
+    "text": "findnodes(g, name::Symbol)\n\nFinds the nodes containing name.\n\n\n\n\n\n"
 },
 
 {
@@ -73,6 +65,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#GraphStorage.nodevals-Tuple{Any,Symbol}",
+    "page": "Home",
+    "title": "GraphStorage.nodevals",
+    "category": "method",
+    "text": "nodevals(g, name::Symbol)\n\nReturn an array of the values corresponding to name. See also findnodes.\n\n\n\n\n\n"
+},
+
+{
     "location": "#GraphStorage.on_path-Tuple{Any,Any,Any}",
     "page": "Home",
     "title": "GraphStorage.on_path",
@@ -81,11 +81,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#GraphStorage.paths_through-Union{Tuple{vType}, Tuple{Any,vType}} where vType<:Integer",
+    "location": "#GraphStorage.paths_through-Tuple{Any,Integer}",
     "page": "Home",
     "title": "GraphStorage.paths_through",
     "category": "method",
-    "text": "paths_through(g, v::vType; dir=:out) where {vType <: Integer}\n\nReturn a vector of the paths going through the given vertex. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
+    "text": "paths_through(g, v::Integer; dir=:out)\n\nReturn a vector of the paths going through the given vertex. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
 },
 
 {
@@ -110,6 +110,14 @@ var documenterSearchIndex = {"docs": [
     "title": "GraphStorage.add_node!",
     "category": "method",
     "text": "add_node!(g, val::NamedTuple)\n\nAdd a new node to the storage graph.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#GraphStorage.extractvals-Tuple{Any,Any}",
+    "page": "Home",
+    "title": "GraphStorage.extractvals",
+    "category": "method",
+    "text": "extractvals(nodes, name)\n\nReturn an array of values corresponding to name form the array of NamedTuples nodes.\n\n\n\n\n\n"
 },
 
 {
