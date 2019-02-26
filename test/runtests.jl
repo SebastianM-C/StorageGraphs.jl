@@ -1,4 +1,4 @@
-using GraphStorage
+using StorageGraphs
 using Test
 
 testdir = dirname(@__FILE__)
@@ -11,7 +11,7 @@ tests = [
     "readme"
 ]
 
-@testset "GraphStorage.jl" begin
+@testset "StorageGraphs.jl" begin
 for t in tests
     tp = joinpath(testdir, "$(t).jl")
     include(tp)

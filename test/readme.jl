@@ -1,7 +1,7 @@
 using LightGraphs
 using MetaGraphs
 using GraphPlot, GraphPlot.Compose
-using GraphStorage
+using StorageGraphs
 
 layout = (x...)->spring_layout(x...; C=9)
 ns = 1
@@ -21,7 +21,7 @@ plot_graph(g, layout=layout, nodesize=ns)
 draw(SVG("$(@__DIR__)/../assets/ex2.svg", 12cm, 4cm),
     plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
 
-using GraphStorage
+using StorageGraphs
 
 g = StorageGraph()
 

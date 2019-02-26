@@ -26,7 +26,7 @@ end
    @test ne(g) == 1
    @test g.paths == Dict(Edge(1,2)=>[1])
    @test g.maxid[] == 1
-   GraphStorage.set_prop!(g, 2)
+   StorageGraphs.set_prop!(g, 2)
    @test g.maxid[] == 2
    @test rem_edge!(g, 1, 2)
    @test ne(g) == 0

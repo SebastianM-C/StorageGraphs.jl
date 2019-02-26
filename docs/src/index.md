@@ -1,8 +1,8 @@
-# GraphStorage.jl
+# StorageGraphs.jl
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [GraphStorage]
+Modules = [StorageGraphs]
 ```
