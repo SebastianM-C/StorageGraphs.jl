@@ -1,6 +1,33 @@
 using Base.Threads
 
 """
+    nextid(g, dep::Pair)
+
+Find the next available id such that a dead end (a node with no outgoing paths)
+along the dependency chain (`dep`) is continued. If there is no such case, it
+gives the maximum id (see [`walkdep`](@ref)).
+"""
+function nextid(g, dep::Pair)
+    dep_end, cpath = walkdep(g, dep)
+    !haskey(g.index, dep_end) && return g.maxid[]
+    v = g[dep_end]
+    if length(outneighbors(g, v)) > 0
+        return g.maxid[]
+    else
+        neighbors = inneighbors(g, v)
+        # there is only one possible edge
+        previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
+        e = Edge(neighbors[previ], v)
+        id = g.paths[e]
+        # There cannot be more than one path since ids are unique and a different
+        # path id would be neended only if there were a difference "further down"
+        # the graph, but this is not the case since this node has no outgoing paths.
+        @assert length(id) == 1
+        return id[1]
+    end
+end
+
+"""
     on_path(g, v, path)
 
 Check if the vertex is on the given path.
@@ -19,6 +46,7 @@ function walkdep(g, dep::Pair; stopcond=(g,v)->false)
     current_node = dep[1]
     remaining = dep[2]
     compatible_paths = paths_through(g, current_node) ∪ paths_through(g, current_node, dir=:in)
+    # @show compatible_paths
     while !stopcond(g, current_node)
         p = paths_through(g, current_node)
         if remaining isa Pair

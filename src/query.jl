@@ -35,7 +35,7 @@ function paths_through(g, v::Integer; dir=:out)
             es = [Edge(i, v) for i in in]
         end
     end
-    union(Int[], get.(Ref(g), es, Int[])...)
+    union(get.(Ref(g.paths), es, Ref(Int[]))...)
 end
 
 function paths_through(g, dep::Pair; dir=:out)

@@ -30,7 +30,7 @@ function add_path!(g, source, dest; id=maxid(g))
     dv = haskey(g.index, dest) ? g[dest] : nv(g) + 1
     dv > nv(g) && add_vertex!(g, dest)
     if has_edge(g, sv, dv)
-        set_prop!(g, sv, dv, e)
+        set_prop!(g, sv, dv, id)
     else
         add_edge!(g, sv, dv, id)
     end

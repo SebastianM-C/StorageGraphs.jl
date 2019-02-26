@@ -1,4 +1,4 @@
-using LightGraphs, MetaGraphs
+using LightGraphs
 
 @testset "Graph creation" begin
     g = StorageGraph()
@@ -10,12 +10,13 @@ using LightGraphs, MetaGraphs
     @test ne(g) == 2
     @test g.data == Dict(1=>(D=0.4,), 2=>(B=0.5,), 3=>(A=1,))
     @test g.index == Dict((D=0.4,)=>1, (B=0.5,)=>2, (A=1,)=>3)
+    @test g.paths == Dict(Edge(1,2)=>[1], Edge(3,1)=>[1])
     @test g.maxid[] == 2
-    dep = (A=1,)=>(D=0.4,)=>(B=0.5,)
+    dep1 = (A=1,)=>(D=0.4,)=>(B=0.5,)
     dep2 = (A=1,)=>(D=0.4,)=>(B=0.6,)
     dep3 = (A=1,)=>(D=0.5,)=>(B=0.5,)
     dep4 = (A=2,)=>(D=0.4,)
-    @test nextid(g, dep) == 1
+    @test nextid(g, dep1) == 1
     @test nextid(g, dep2) == 2
     @test nextid(g, dep3) == 2
     @test nextid(g, dep3) == 2

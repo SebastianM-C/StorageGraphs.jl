@@ -5,6 +5,7 @@ testdir = dirname(@__FILE__)
 
 tests = [
     "interface",
+    "walk",
     "creation",
     "query",
     "readme"
