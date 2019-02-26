@@ -1,6 +1,6 @@
-name = "GraphStorage"
+name = "StorageGraphs"
 uuid = "c6099cd0-0852-11e9-0daa-efe3a3d8ad5c"
-authors = ["sebastian <m.c.sebastian95@gmail.com>"]
+authors = ["Sebastian Micluța-Câmpeanu <m.c.sebastian95@gmail.com>"]
 version = "0.1.0"
 
 [deps]

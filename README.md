@@ -1,10 +1,10 @@
-# GraphStorage
+# StorageGraphs
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://SebastianM-C.github.io/GraphStorage.jl/stable)
-[![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://SebastianM-C.github.io/GraphStorage.jl/latest)
-[![Build Status](https://travis-ci.com/SebastianM-C/GraphStorage.jl.svg?branch=master)](https://travis-ci.com/SebastianM-C/GraphStorage.jl)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/SebastianM-C/GraphStorage.jl?svg=true)](https://ci.appveyor.com/project/SebastianM-C/GraphStorage-jl)
-[![Codecov](https://codecov.io/gh/SebastianM-C/GraphStorage.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SebastianM-C/GraphStorage.jl)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://SebastianM-C.github.io/StorageGraphs.jl/stable)
+[![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://SebastianM-C.github.io/StorageGraphs.jl/latest)
+[![Build Status](https://travis-ci.com/SebastianM-C/StorageGraphs.jl.svg?branch=master)](https://travis-ci.com/SebastianM-C/StorageGraphs.jl)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/SebastianM-C/StorageGraphs.jl?svg=true)](https://ci.appveyor.com/project/SebastianM-C/StorageGraphs-jl)
+[![Codecov](https://codecov.io/gh/SebastianM-C/StorageGraphs.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SebastianM-C/StorageGraphs.jl)
 
 This is an _experimental_ package for storing hierarchical data in graphs in a non-redundant way.
 This package aims to be useful when one has a combination of data and metadata or parameters
@@ -55,7 +55,7 @@ we can specify the values as a vector. For example, for generating the above gra
 we can use:
 
 ```julia
-using GraphStorage
+using StorageGraphs
 
 g = StorageGraph()
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
@@ -96,7 +96,7 @@ We will now progressively build up the graph. Let's say that the first simulatio
 has `P=1` and using `"alg1"` we generated some initial conditions (`x`).
 
 ```julia
-using GraphStorage
+using StorageGraphs
 
 g = StorageGraph()
 

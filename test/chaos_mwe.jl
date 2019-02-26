@@ -1,7 +1,7 @@
 module Chaos_MWE
 
 using LightGraphs, MetaGraphs
-using GraphStorage
+using StorageGraphs
 
 g = StorageGraph()
 

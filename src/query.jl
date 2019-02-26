@@ -1,3 +1,17 @@
+function getindex(g::StorageGraph, data::NamedTuple)
+    !haskey(g.index, data) && error("':$data' is not an index")
+    return g.index[data]
+end
+
+function getproperty(g::StorageGraph, s::Symbol)
+    allkeys = keys.(keys(g.index))
+    if haskey(allkeys, s)
+        return extractvals(g, s)
+    else # fallback to getfield
+        return getfield(obj, sym)
+    end
+end
+
 """
     paths_through(g, v::Integer; dir=:out)
 
@@ -21,7 +35,7 @@ function paths_through(g, v::Integer; dir=:out)
             es = [Edge(i, v) for i in in]
         end
     end
-    union(Int[], get_prop.(Ref(g), es, :id)...)
+    union(get.(Ref(g.paths), es, Ref(Int[]))...)
 end
 
 function paths_through(g, dep::Pair; dir=:out)
@@ -29,8 +43,8 @@ function paths_through(g, dep::Pair; dir=:out)
 end
 
 function paths_through(g, node::NamedTuple; dir=:out)
-    !haskey(g[:data], node) && return Int[]
-    paths_through(g, g[node, :data], dir=dir)
+    !haskey(g.index, node) && return Int[]
+    paths_through(g, g[node], dir=dir)
 end
 
 """
@@ -39,7 +53,7 @@ end
 Return the vertex indices for the neighbors at the end of the dependency chain.
 """
 function final_neighborhs(g, dep::Pair; dir=:out)
-    v = g[endof(dep), :data]
+    v = g[endof(dep)]
     dir == :out ? outneighbors(g, v) : inneighbors(g, v)
 end
 
@@ -49,7 +63,7 @@ end
 Finds the nodes containing `name`.
 """
 function findnodes(g, name::Symbol)
-    findall(v -> haskey(g.vprops[v][:data], name), g[:data])
+    findall(v -> haskey(g.data[v], name), g.index)
 end
 
 """

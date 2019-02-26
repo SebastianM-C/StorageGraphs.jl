@@ -1,22 +1,22 @@
-using LightGraphs, MetaGraphs
+using LightGraphs
 
 @testset "Graph creation" begin
     g = StorageGraph()
-    @test maxid(g) == 1
+    @test g.maxid[] == 1
     @test nextid(g, (A=1,)=>(D=0.4,)) == 1
     add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,))
+    @test length(g.data) == length(g.index)
     @test nv(g) == 3
     @test ne(g) == 2
-    @test props(g, 1) == Dict(:data=>(D=0.4,))
-    @test props(g, 2) == Dict(:data=>(B=0.5,))
-    @test props(g, 3) == Dict(:data=>(A=1,))
-    @test has_prop(g, :id)
-    @test maxid(g) == 2
-    dep = (A=1,)=>(D=0.4,)=>(B=0.5,)
+    @test g.data == Dict(1=>(D=0.4,), 2=>(B=0.5,), 3=>(A=1,))
+    @test g.index == Dict((D=0.4,)=>1, (B=0.5,)=>2, (A=1,)=>3)
+    @test g.paths == Dict(Edge(1,2)=>[1], Edge(3,1)=>[1])
+    @test g.maxid[] == 2
+    dep1 = (A=1,)=>(D=0.4,)=>(B=0.5,)
     dep2 = (A=1,)=>(D=0.4,)=>(B=0.6,)
     dep3 = (A=1,)=>(D=0.5,)=>(B=0.5,)
     dep4 = (A=2,)=>(D=0.4,)
-    @test nextid(g, dep) == 1
+    @test nextid(g, dep1) == 1
     @test nextid(g, dep2) == 2
     @test nextid(g, dep3) == 2
     @test nextid(g, dep3) == 2
@@ -36,26 +36,26 @@ end
         add_bulk!(g, (A=1,)=>(B=0.4,), val1)
         @test nv(g) == 5
         @test ne(g) == 4
-        @test props(g, 1) == Dict(:data=>(A=1,))
-        @test props(g, 2) == Dict(:data=>(B=0.4,))
-        @test props(g, 3) == Dict(:data=>(q₀=[0,1],q₂=[2,1]))
-        @test props(g, 4) == Dict(:data=>(q₀=[0,2],q₂=[2,2]))
-        @test props(g, 5) == Dict(:data=>(q₀=[0,3],q₂=[2,3]))
-        @test props(g, 1, 2) == Dict(:id=>[1,2,3])
-        @test props(g, 2, 3) == Dict(:id=>[1])
-        @test props(g, 2, 4) == Dict(:id=>[2])
-        @test props(g, 2, 5) == Dict(:id=>[3])
+        @test get_prop(g, 1) == (A=1,)
+        @test get_prop(g, 2) == (B=0.4,)
+        @test get_prop(g, 3) == (q₀=[0,1],q₂=[2,1])
+        @test get_prop(g, 4) == (q₀=[0,2],q₂=[2,2])
+        @test get_prop(g, 5) == (q₀=[0,3],q₂=[2,3])
+        @test get_prop(g, 1, 2) == [1,2,3]
+        @test get_prop(g, 2, 3) == [1]
+        @test get_prop(g, 2, 4) == [2]
+        @test get_prop(g, 2, 5) == [3]
 
         @test nextid(g, (A=1,)=>(B=0.5,)=>(x=1,)) == 4
         add_bulk!(g, (A=1,)=>(B=0.5,), (q₀=[[0,-1],[0,-2]], q₂=[[2,-1],[2,-2]]))
         @test nv(g) == 8
         @test ne(g) == 7
-        @test props(g, 6) == Dict(:data=>(B=0.5,))
-        @test props(g, 7) == Dict(:data=>(q₀=[0,-1],q₂=[2,-1]))
-        @test props(g, 8) == Dict(:data=>(q₀=[0,-2],q₂=[2,-2]))
-        @test props(g, 1, 6) == Dict(:id=>[4,5])
-        @test props(g, 6, 7) == Dict(:id=>[4])
-        @test props(g, 6, 8) == Dict(:id=>[5])
+        @test get_prop(g, 6) == (B=0.5,)
+        @test get_prop(g, 7) == (q₀=[0,-1],q₂=[2,-1])
+        @test get_prop(g, 8) == (q₀=[0,-2],q₂=[2,-2])
+        @test get_prop(g, 1, 6) == [4,5]
+        @test get_prop(g, 6, 7) == [4]
+        @test get_prop(g, 6, 8) == [5]
     end
 
     l = (l=0.1:0.1:0.3,)
@@ -63,11 +63,11 @@ end
         add_derived_values!(g, ((A=1,), (B=0.4,)), val1, l, (t=1,))
         @test nv(g) == 12
         @test ne(g) == 13
-        @test props(g, 1, 2) == Dict(:id=>[1,2,3])
-        @test props(g, 9) == Dict(:data=>(t=1,))
-        @test props(g, 2, 3) == props(g, 3, 9) == props(g, 9, 10) == Dict(:id=>[1])
-        @test props(g, 2, 4) == props(g, 4, 9) == props(g, 9, 11) == Dict(:id=>[2])
-        @test props(g, 2, 5) == props(g, 5, 9) == props(g, 9, 12) == Dict(:id=>[3])
+        @test get_prop(g, 1, 2) == [1,2,3]
+        @test get_prop(g, 9) == (t=1,)
+        @test get_prop(g, 2, 3) == get_prop(g, 3, 9) == get_prop(g, 9, 10) == [1]
+        @test get_prop(g, 2, 4) == get_prop(g, 4, 9) == get_prop(g, 9, 11) == [2]
+        @test get_prop(g, 2, 5) == get_prop(g, 5, 9) == get_prop(g, 9, 12) == [3]
     end
 end
 
