@@ -29,23 +29,24 @@ function add_path!(g, source, dest; id=maxid(g))
     sv > nv(g) && add_node!(g, source)
     dv = haskey(g[:data], dest) ? g[dest, :data] : nv(g) + 1
     dv > nv(g) && add_node!(g, dest)
-    if has_edge(g, sv, dv)
-        push!(g.eprops[Edge(sv,dv)][:id], id)
-        unique!(g.eprops[Edge(sv,dv)][:id])
-    else
-        add_edge!(g, sv, dv, Dict(:id=>[id]))
-    end
+    # if has_edge(g, sv, dv)
+    #     push!(g.eprops[Edge(sv,dv)][:id], id)
+    #     unique!(g.eprops[Edge(sv,dv)][:id])
+    # else
+    #     add_edge!(g, sv, dv, Dict(:id=>[id]))
+    # end
+    add_edge!(g, sv, dv, id)
 end
 
-"""
-    add_node!(g, val::NamedTuple)
-
-Add a new node to the storage graph.
-"""
-function add_node!(g, val::NamedTuple)
-    add_vertex!(g)
-    set_prop!(g, nv(g), :data, val)
-end
+# """
+#     add_node!(g, data::NamedTuple)
+#
+# Add a new node to the storage graph.
+# """
+# function add_node!(g, data::NamedTuple)
+#     add_vertex!(g)
+#     set_prop!(g, nv(g), :data, data)
+# end
 
 function endof(dep)
     if dep[2] isa Pair

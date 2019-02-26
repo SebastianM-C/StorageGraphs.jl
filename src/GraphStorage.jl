@@ -7,15 +7,36 @@ export StorageGraph, add_nodes!, nextid, maxid, add_derived_values!, add_path!,
 using LightGraphs, MetaGraphs
 using GraphPlot
 
+struct StorageGraph{T<:Integer} <: AbstractGraph{T}
+    graph::SimpleDiGraph{T}
+    data::Dict{T,NamedTuple}
+    paths::Dict{SimpleEdge{T},Vector{T}}
+    maxid::Ref{T}
+    names::Set{Symbol}
+end
+
+function StorageGraph(x)
+    T = eltype(x)
+    g = SimpleDiGraph(x)
+    data = Dict{T,NamedTuple}()
+    paths = Dict{SimpleEdge{T},Vector{T}}()
+    maxid = Ref(zero(T))
+    names = Set{Symbol}()
+
+    StorageGraph(g, data, paths, maxid, names)
+end
+
+StorageGraph() = StorageGraph(SimpleDiGraph())
+StorageGraph{T}() where {T <: Integer} = StorageGraph(SimpleDiGraph{T}())
+StorageGraph{T}(x::Integer) where {T <: Integer} = StorageGraph(T(x))
+
+# converts StorageGraph{Int} to StorageGraph{UInt8}
+StorageGraph{T}(g::StorageGraph) where {T <: Integer} = StorageGraph(SimpleDiGraph{T}(g.graph))
+
+include("interface.jl")
 include("add.jl")
 include("query.jl")
 include("walk.jl")
-
-function StorageGraph()
-    g = MetaDiGraph()
-    set_indexing_prop!(g, :data)
-    return g
-end
 
 maxid(g) = haskey(g.gprops, :id) ? g.gprops[:id] : 1
 

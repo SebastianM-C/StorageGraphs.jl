@@ -1,3 +1,16 @@
+function getindex(g::StorageGraph, data::NamedTuple)
+    !haskey(g.data, data) && error("':$data' is not an index")
+    return g.data[data]
+end
+
+function getproperty(g::StorageGraph, s::Symbol)
+    if haskey(g.names, s)
+        return extractvals(g, s)
+    else # fallback to getfield
+        return getfield(obj, sym)
+    end
+end
+
 """
     paths_through(g, v::Integer; dir=:out)
 
