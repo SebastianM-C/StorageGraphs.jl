@@ -11,7 +11,7 @@ function add_nodes!(g, dep::Pair; id=nextid(g, dep))
         dest = add_nodes!(g, dep[2], id=id)
     else
         dest = dep[2]
-        set_prop!(g, :id, id+1)
+        set_prop!(g, id+1)
     end
     add_path!(g, dep[1], dest, id=id)
 
@@ -25,28 +25,16 @@ Create a path between the source node and the destination one.
 If the nodes do not exist, they are created.
 """
 function add_path!(g, source, dest; id=maxid(g))
-    sv = haskey(g[:data], source) ? g[source, :data] : nv(g) + 1
-    sv > nv(g) && add_node!(g, source)
-    dv = haskey(g[:data], dest) ? g[dest, :data] : nv(g) + 1
-    dv > nv(g) && add_node!(g, dest)
-    # if has_edge(g, sv, dv)
-    #     push!(g.eprops[Edge(sv,dv)][:id], id)
-    #     unique!(g.eprops[Edge(sv,dv)][:id])
-    # else
-    #     add_edge!(g, sv, dv, Dict(:id=>[id]))
-    # end
-    add_edge!(g, sv, dv, id)
+    sv = haskey(g.index, source) ? g[source] : nv(g) + 1
+    sv > nv(g) && add_vertex!(g, source)
+    dv = haskey(g.index, dest) ? g[dest] : nv(g) + 1
+    dv > nv(g) && add_vertex!(g, dest)
+    if has_edge(g, sv, dv)
+        set_prop!(g, sv, dv, e)
+    else
+        add_edge!(g, sv, dv, id)
+    end
 end
-
-# """
-#     add_node!(g, data::NamedTuple)
-#
-# Add a new node to the storage graph.
-# """
-# function add_node!(g, data::NamedTuple)
-#     add_vertex!(g)
-#     set_prop!(g, nv(g), :data, data)
-# end
 
 function endof(dep)
     if dep[2] isa Pair

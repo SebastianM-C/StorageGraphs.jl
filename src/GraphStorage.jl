@@ -1,10 +1,12 @@
 module GraphStorage
 
-export StorageGraph, add_nodes!, nextid, maxid, add_derived_values!, add_path!,
+export StorageGraph, add_nodes!, nextid, add_derived_values!, add_path!,
     add_bulk!, paths_through, on_path, walkpath, walkdep, final_neighborhs,
     findnodes, nodevals, plot_graph
 
-using LightGraphs, MetaGraphs
+using LightGraphs
+using LightGraphs.SimpleGraphs: SimpleEdge
+
 using GraphPlot
 
 struct StorageGraph{T<:Integer} <: AbstractGraph{T}
@@ -12,7 +14,7 @@ struct StorageGraph{T<:Integer} <: AbstractGraph{T}
     data::Dict{T,NamedTuple}
     paths::Dict{SimpleEdge{T},Vector{T}}
     maxid::Ref{T}
-    names::Set{Symbol}
+    index::Dict{NamedTuple,T}
 end
 
 function StorageGraph(x)
@@ -20,10 +22,10 @@ function StorageGraph(x)
     g = SimpleDiGraph(x)
     data = Dict{T,NamedTuple}()
     paths = Dict{SimpleEdge{T},Vector{T}}()
-    maxid = Ref(zero(T))
-    names = Set{Symbol}()
+    maxid = Ref(one(T))
+    index = Dict{NamedTuple,T}()
 
-    StorageGraph(g, data, paths, maxid, names)
+    StorageGraph(g, data, paths, maxid, index)
 end
 
 StorageGraph() = StorageGraph(SimpleDiGraph())
@@ -38,8 +40,6 @@ include("add.jl")
 include("query.jl")
 include("walk.jl")
 
-maxid(g) = haskey(g.gprops, :id) ? g.gprops[:id] : 1
-
 """
     nextid(g, dep::Pair)
 
@@ -49,8 +49,8 @@ gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
-    !haskey(g[:data], dep_end) && return maxid(g)
-    v = g[dep_end, :data]
+    !haskey(g.data, dep_end) && return g.maxid[]
+    v = g[dep_end]
     if length(outneighbors(g, v)) > 0
         return maxid(g)
     else
@@ -58,7 +58,7 @@ function nextid(g, dep::Pair)
         # there is only one possible edge
         previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
         e = Edge(neighbors[previ], v)
-        id = g.eprops[e][:id]
+        id = g.path[e]
         # There cannot be more than one path since ids are unique and a different
         # path id would be neended only if there were a difference "further down"
         # the graph, but this is not the case since this node has no outgoing paths.
@@ -68,8 +68,8 @@ function nextid(g, dep::Pair)
 end
 
 function plot_graph(g; args...)
-    vlabels = [g.vprops[i][:data] for i in vertices(g)]
-    elabels = [g.eprops[i][:id] for i in edges(g)]
+    vlabels = [g.data[i] for i in vertices(g)]
+    elabels = [g.paths[i] for i in edges(g)]
     gplot(g; nodelabel=vlabels, edgelabel=elabels, args...)
 end
 

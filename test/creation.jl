@@ -2,16 +2,15 @@ using LightGraphs, MetaGraphs
 
 @testset "Graph creation" begin
     g = StorageGraph()
-    @test maxid(g) == 1
+    @test g.maxid[] == 1
     @test nextid(g, (A=1,)=>(D=0.4,)) == 1
     add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,))
+    @test length(g.data) == length(g.index)
     @test nv(g) == 3
     @test ne(g) == 2
-    @test props(g, 1) == Dict(:data=>(D=0.4,))
-    @test props(g, 2) == Dict(:data=>(B=0.5,))
-    @test props(g, 3) == Dict(:data=>(A=1,))
-    @test has_prop(g, :id)
-    @test maxid(g) == 2
+    @test g.data == Dict(1=>(D=0.4,), 2=>(B=0.5,), 3=>(A=1,))
+    @test g.index == Dict((D=0.4,)=>1, (B=0.5,)=>2, (A=1,)=>3)
+    @test g.maxid[] == 2
     dep = (A=1,)=>(D=0.4,)=>(B=0.5,)
     dep2 = (A=1,)=>(D=0.4,)=>(B=0.6,)
     dep3 = (A=1,)=>(D=0.5,)=>(B=0.5,)

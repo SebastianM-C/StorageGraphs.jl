@@ -1,3 +1,6 @@
+import Base:
+    eltype, show, ==, zero, copy, issubset, getindex
+
 import LightGraphs:
     edgetype, nv, ne, vertices, edges, is_directed,
     add_vertex!, add_edge!, rem_vertex!, rem_edge!,
@@ -12,7 +15,7 @@ import LightGraphs.SimpleGraphs:
     SimpleEdge, fadj, badj
 
 function show(io::IO, g::StorageGraph)
-    print(io, "{$(nv(g)), $(ne(g))} $dir $(eltype(g)) storage graph")
+    print(io, "{$(nv(g)), $(ne(g))} $(eltype(g)) storage graph")
 end
 
 @inline fadj(g::StorageGraph, x...) = fadj(g.graph, x...)
@@ -63,7 +66,7 @@ Return true if the vertex has been added, false otherwise.
 add_vertex!(g::StorageGraph) = add_vertex!(g.graph)
 function add_vertex!(g::StorageGraph, data::NamedTuple)
     add_vertex!(g) || return false
-    set_props!(g, nv(g), d)
+    set_prop!(g, nv(g), data)
     return true
 end
 
@@ -90,8 +93,8 @@ Will return false if vertex or edge does not exist, true otherwise.
 """
 function set_prop!(g::StorageGraph, v::Integer, val::NamedTuple)
     if has_vertex(g, v)
-        keys(val) ∈ g.names && push!(g.names, keys(val))
         g.data[v] = val
+        g.index[val] = v
         return true
     end
     return false
@@ -101,7 +104,8 @@ set_prop!(g::StorageGraph{T}, u::Integer, v::Integer, val::Integer) where {T} = 
 
 function set_prop!(g::StorageGraph, e::SimpleEdge, val::Integer)
     if has_edge(g, e)
-        push!(g.paths[e], val)
+        haskey(g.paths, e) ? push!(g.paths[e], val) : push!(g.paths, e=>[val])
+        unique!(g.paths[e])
         return true
     end
     return false
@@ -121,7 +125,7 @@ vertex `v`, or edge `e` (optionally referenced by source vertex `s` and destinat
 If property, vertex, or edge does not exist, will not do anything.
 """
 rem_prop!(g::StorageGraph, v::Integer) = delete!(g.data, v)
-rem_prop!(g::StorageGraph, e::SimpleEdge) = deleteat!(g.paths, e)
+rem_prop!(g::StorageGraph, e::SimpleEdge) = delete!(g.paths, e)
 rem_prop!(g::StorageGraph{T}, u::Integer, v::Integer) where {T} = rem_prop!(g, Edge(T(u), T(v)))
 
 ==(x::StorageGraph, y::StorageGraph) = (x.graph == y.graph) && (x.data == y.data) && (x.paths == y.paths)

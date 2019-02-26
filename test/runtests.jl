@@ -4,6 +4,7 @@ using Test
 testdir = dirname(@__FILE__)
 
 tests = [
+    "interface",
     "creation",
     "query",
     "readme"
