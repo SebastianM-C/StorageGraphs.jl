@@ -81,6 +81,18 @@ is_directed(::Type{StorageGraph{T}}) where {T} = true
 is_directed(g::StorageGraph) = true
 
 """
+    get_prop(g, v)
+    get_prop(g, e)
+    get_prop(g, s, d)
+Return the specific property (data for vertices, ids for edges) defined for graph `g`,
+vertex `v`, or edge `e` (optionally referenced by source vertex `s` and destination vertex `d`).
+If property is not defined, return an error.
+"""
+get_prop(g::StorageGraph, v::Integer) = g.data[v]
+get_prop(g::StorageGraph, e::SimpleEdge) = g.paths[e]
+get_prop(g::StorageGraph, u::Integer, v::Integer) = get_prop(g, Edge(u, v))
+
+"""
     set_prop!(g, val)
     set_prop!(g, v, val)
     set_prop!(g, e, val)

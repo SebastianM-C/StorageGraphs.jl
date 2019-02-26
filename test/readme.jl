@@ -37,7 +37,7 @@ draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 12cm, 4.5cm),
 simulation(x; alg) = alg == "alg1" ? x.+2 : x.^2
 
 # retrieve the previously stored initial conditions
-x = [g.vprops[v][:data][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
+x = [g.data[v][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 

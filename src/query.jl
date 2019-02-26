@@ -53,7 +53,7 @@ end
 Return the vertex indices for the neighbors at the end of the dependency chain.
 """
 function final_neighborhs(g, dep::Pair; dir=:out)
-    v = g[endof(dep), :data]
+    v = g[endof(dep)]
     dir == :out ? outneighbors(g, v) : inneighbors(g, v)
 end
 

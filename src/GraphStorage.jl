@@ -2,7 +2,7 @@ module GraphStorage
 
 export StorageGraph, add_nodes!, nextid, add_derived_values!, add_path!,
     add_bulk!, paths_through, on_path, walkpath, walkdep, final_neighborhs,
-    findnodes, nodevals, plot_graph
+    findnodes, nodevals, get_prop, set_prop!, plot_graph
 
 using LightGraphs
 using LightGraphs.SimpleGraphs: SimpleEdge
