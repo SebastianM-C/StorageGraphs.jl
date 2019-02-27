@@ -2,7 +2,7 @@ using LightGraphs
 
 @testset "Graph creation" begin
     g = StorageGraph()
-    @test g.maxid[] == 1
+    @test get_prop(g) == 1
     @test nextid(g, (A=1,)=>(D=0.4,)) == 1
     add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,))
     @test length(g.data) == length(g.index)
@@ -11,7 +11,7 @@ using LightGraphs
     @test g.data == Dict(1=>(D=0.4,), 2=>(B=0.5,), 3=>(A=1,))
     @test g.index == Dict((D=0.4,)=>1, (B=0.5,)=>2, (A=1,)=>3)
     @test g.paths == Dict(Edge(1,2)=>[1], Edge(3,1)=>[1])
-    @test g.maxid[] == 2
+    @test get_prop(g) == 2
     dep1 = (A=1,)=>(D=0.4,)=>(B=0.5,)
     dep2 = (A=1,)=>(D=0.4,)=>(B=0.6,)
     dep3 = (A=1,)=>(D=0.5,)=>(B=0.5,)

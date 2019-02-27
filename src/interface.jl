@@ -5,10 +5,7 @@ import LightGraphs:
     edgetype, nv, ne, vertices, edges, is_directed,
     add_vertex!, add_edge!, rem_vertex!, rem_edge!,
     has_vertex, has_edge, inneighbors, outneighbors,
-    indegree, outdegree, degree,
-    induced_subgraph,
-    loadgraph, savegraph, AbstractGraphFormat,
-    reverse
+    loadgraph, savegraph, AbstractGraphFormat
 
 import LightGraphs.SimpleGraphs:
     SimpleDiGraph,
@@ -81,16 +78,33 @@ is_directed(::Type{StorageGraph{T}}) where {T} = true
 is_directed(g::StorageGraph) = true
 
 """
+    get_prop(g)
     get_prop(g, v)
     get_prop(g, e)
     get_prop(g, s, d)
-Return the specific property (data for vertices, ids for edges) defined for graph `g`,
-vertex `v`, or edge `e` (optionally referenced by source vertex `s` and destination vertex `d`).
-If property is not defined, return an error.
+Return the specific property (data for vertices, ids for edges, max id for the graph)
+defined for graph `g`, vertex `v`, or edge `e` (optionally referenced by source
+vertex `s` and destination vertex `d`).
+If property does not exist, return an empty collection.
 """
-get_prop(g::StorageGraph, v::Integer) = g.data[v]
-get_prop(g::StorageGraph, e::SimpleEdge) = g.paths[e]
+get_prop(g) = g.maxid[]
+get_prop(g::StorageGraph, v::Integer) = get(g.data, v, NamedTuple())
+get_prop(g::StorageGraph, e::SimpleEdge) = get(g.paths, e, eltype(g)[])
 get_prop(g::StorageGraph, u::Integer, v::Integer) = get_prop(g, Edge(u, v))
+
+"""
+    has_prop(g, v, prop)
+    has_prop(g, e, prop)
+    has_prop(g, s, d, prop)
+Return true if the property `prop` belongs to the specific property
+(data for vertices, ids for dges) for graph `g`, vertex `v`, or
+edge `e` (optionally referenced by source vertex `s` and destination vertex `d`).
+For nodes this will check if `prop` is a key of the node, while for edges
+it will check if `prop` belongs to the id list.
+"""
+has_prop(g::StorageGraph, v::Integer, prop::Symbol) = haskey(get_prop(g, v), prop)
+has_prop(g::StorageGraph, e::SimpleEdge, prop::Integer) = in(prop, get_prop(g, e))
+has_prop(g::StorageGraph, u::Integer, v::Integer, prop::Integer) = has_prop(g, Edge(u, v), prop)
 
 """
     set_prop!(g, val)
@@ -142,6 +156,6 @@ rem_prop!(g::StorageGraph{T}, u::Integer, v::Integer) where {T} = rem_prop!(g, E
 
 ==(x::StorageGraph, y::StorageGraph) = (x.graph == y.graph) && (x.data == y.data) && (x.paths == y.paths)
 
-copy(g::T) where T <: StorageGraph = deepcopy(g)
+copy(g::T) where {T} <: StorageGraph = deepcopy(g)
 
 zero(g::StorageGraph{T}) where {T} = StorageGraph{T}(SimpleDiGraph{T}())

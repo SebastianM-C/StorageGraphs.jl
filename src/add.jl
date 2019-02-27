@@ -59,9 +59,9 @@ function add_bulk!(g, dep, vals)
         add_nodes!(g, dep)
         # decrease the id to stay on the same path
         id = nextid(g, dep)
-        if id == g.maxid[]
+        if id == get_prop(g)
             id -= 1
-            g.maxid[] -= 1
+            set_prop!(g, id)
         end
         val = (v[i] for v in vals)
         add_nodes!(g, dep_end=>NamedTuple{keys(vals)}(val), id=id)

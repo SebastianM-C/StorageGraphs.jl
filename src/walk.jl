@@ -9,16 +9,16 @@ gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
-    !haskey(g.index, dep_end) && return g.maxid[]
+    !haskey(g.index, dep_end) && return get_prop(g)
     v = g[dep_end]
     if length(outneighbors(g, v)) > 0
-        return g.maxid[]
+        return get_prop(g)
     else
         neighbors = inneighbors(g, v)
         # there is only one possible edge
         previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
         # check if the node is isolated and there are no ingoing edges
-        isnothing(previ) && return g.maxid[]
+        previ === nothing && return get_prop(g)
         e = Edge(neighbors[previ], v)
         id = g.paths[e]
         # There cannot be more than one path since ids are unique and a different
@@ -48,7 +48,7 @@ function walkdep(g, dep::Pair; stopcond=(g,v)->false)
     current_node = dep[1]
     remaining = dep[2]
     compatible_paths = paths_through(g, current_node) ∪ paths_through(g, current_node, dir=:in)
-    # @show compatible_paths
+    # @debug compatible_paths
     while !stopcond(g, current_node)
         p = paths_through(g, current_node)
         if remaining isa Pair
@@ -68,7 +68,7 @@ function walkdep(g, dep::Pair; stopcond=(g,v)->false)
             end
         end
     end
-    return remaining, compatible_paths
+    return current_node, compatible_paths
 end
 
 """
