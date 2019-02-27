@@ -28,13 +28,20 @@
 
     v = walkpath(g, [1], 3)
     @test length(v) == 1
-    @test get_prop(g, v...) == (E=1.,)
-    g[1]
+    @test get_prop(g, v[1]) == (E=1.,)
 
-    # v = walkpath(g, p, g[:D][0.4], stopcond=(g,v)->has_prop(g, v, :B))
-    # @test length(unique(v)) == 1
-    # @test get_prop(g, v[1]) == Dict(:B=>0.5)
+    v = walkpath(g, p, g[(D=0.4,)], stopcond=(g,v)->has_prop(g, v, :B))
+    @test length(unique(v)) == 1
+    @test get_prop(g, v[1]) == (B=0.5,)
 
-    g[(A=1,)=>(D=0.4,)=>(B=0.5,), :E]
-    g[:B, (A=1,), (D=0.4,)]
+    @test g[1] == get_prop(g, 1) == (D=0.4,)
+    @test g[g[(A=1,)]] == (A=1,)
+    @test isempty(setdiff(get_prop.(Ref(g), g[(A=1,)=>(D=0.4,)]), [(B=0.5,),(B=0.6,)]))
+    @test isempty(setdiff(g[(A=1,)=>(D=0.4,), :B], [0.5, 0.6]))
+    @test isempty(setdiff(g[(A=1,)=>(D=0.4,)=>(B=0.5,), :E], [1, 2, 3]))
+    @test isempty(setdiff(g[:B, (A=1,), (D=0.4,)], [0.5, 0.6]))
+
+    add_bulk!(g, (A=1,)=>(D=0.5,)=>(B=0.5,), (E=[5, 6],))
+    @test isempty(setdiff(g[:E, (D=0.5,), (B=0.5,)], [5, 6]))
+    @test isempty(setdiff(g[:E, (A=1,), (B=0.5,)], [1, 2, 3, 5, 6]))
 end
