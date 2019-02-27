@@ -1,7 +1,7 @@
 # StorageGraphs
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://SebastianM-C.github.io/StorageGraphs.jl/stable)
-[![Latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://SebastianM-C.github.io/StorageGraphs.jl/latest)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://SebastianM-C.github.io/StorageGraphs.jl/dev)
 [![Build Status](https://travis-ci.com/SebastianM-C/StorageGraphs.jl.svg?branch=master)](https://travis-ci.com/SebastianM-C/StorageGraphs.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/SebastianM-C/StorageGraphs.jl?svg=true)](https://ci.appveyor.com/project/SebastianM-C/StorageGraphs-jl)
 [![Codecov](https://codecov.io/gh/SebastianM-C/StorageGraphs.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SebastianM-C/StorageGraphs.jl)
