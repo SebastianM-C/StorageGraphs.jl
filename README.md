@@ -32,9 +32,9 @@ the same id. For example if we have `x = [1, 2, 3]`, then the graph looks like t
 
 Now, let's consider that we have a function, say `f(x) = x^2`, and we apply it
 to our `x` and want to store the resulting `y = [1, 4, 9]`. We encode
-the fact that `y` was derived / computed from `x` by using edges
-oriented from the `x` nodes to the `y` nodes. We can compare the
-graph and the table representations
+the fact that `y` was derived / computed from `x` by using edges oriented from
+the `x` nodes to the `y` nodes. This creates a hierarchy in the data.
+We can compare the graph and the table representations:
 
 ![graph example](assets/ex2.svg)
 
@@ -64,9 +64,11 @@ add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 Note: `NamedTuple`s with a single element must use a comma.
 (`(a=1,)` is not the same as `(a=1)`)
 
-This package used a `MetaDiGraph` from [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl)
-for the graph and metadata. The metadata is stored in dictionaries with the keys
-being given by vertices or edges. There are two ways of querying the data in the
+This package provides a custom a `AbstractGraph` type called `StorageGraph`
+(similar to `MetaDiGraph`s in [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl)).
+The metadata is stored in dictionaries with the keys being given by vertices or edges.
+For nodes the data is in the `g.data` field, while for edges in `g.paths`.
+There are two ways of querying the data in the
 graph: by using indexing and by using the relationships with other nodes.
 
 - For the first kind, we can use `findnodes(g, :name)` to get an array of
