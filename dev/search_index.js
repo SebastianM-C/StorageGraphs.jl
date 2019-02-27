@@ -9,139 +9,171 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#GraphStorage.add_bulk!-Tuple{Any,Any,Any}",
+    "location": "#StorageGraphs.add_bulk!-Tuple{Any,Any,Any}",
     "page": "Home",
-    "title": "GraphStorage.add_bulk!",
+    "title": "StorageGraphs.add_bulk!",
     "category": "method",
     "text": "add_bulk!(g, dep, vals)\n\nAdd the multiple values (vals) of the things identified by the keys of vals, with the dependency chain given by dep. The values of vals are assumed to be vectors. Each added node will correspond to an element of the vectors. Note: The dependency chain must contain all relevant information for identifying the values.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.add_derived_values!-Tuple{Any,Any,NamedTuple,NamedTuple,Vararg{Any,N} where N}",
+    "location": "#StorageGraphs.add_derived_values!-Tuple{Any,Any,NamedTuple,NamedTuple,Vararg{Any,N} where N}",
     "page": "Home",
-    "title": "GraphStorage.add_derived_values!",
+    "title": "StorageGraphs.add_derived_values!",
     "category": "method",
     "text": "add_derived_values!(g, base_dep, base_val, val, inner_deps...)\n\nAdd multiple values such that the elements in base_val and val are linked in such a way that the order is preserved. This is useful when one wants to add a vector of values derived from another vector. The dependency for the base values (base_dep) must be given as a collection of NamedTuples instead of a nested Pair. Also, any inner dependencies (inner_deps) must be given as individual NamedTuples. A new path is created for each value, but if a part already exists, it is continued (see nextid).\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.add_nodes!-Tuple{Any,Pair}",
+    "location": "#StorageGraphs.add_nodes!-Tuple{Any,Pair}",
     "page": "Home",
-    "title": "GraphStorage.add_nodes!",
+    "title": "StorageGraphs.add_nodes!",
     "category": "method",
     "text": "add_nodes!(g, dep::Pair; id=nextid(g))\n\nRecursively add nodes via the dependency chain specified by dep. If any intermediarry node doesn\'t exist, it is created. A new path is created starting from the first node to the last one, but if there is an existing part, it is continued (see nextid).\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.add_path!-Tuple{Any,Any,Any}",
+    "location": "#StorageGraphs.add_path!-Tuple{Any,Any,Any}",
     "page": "Home",
-    "title": "GraphStorage.add_path!",
+    "title": "StorageGraphs.add_path!",
     "category": "method",
     "text": "add_path!(g, source, dest; id=maxid(g))\n\nCreate a path between the source node and the destination one. If the nodes do not exist, they are created.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.final_neighborhs-Tuple{Any,Pair}",
+    "location": "#StorageGraphs.final_neighborhs-Tuple{Any,Pair}",
     "page": "Home",
-    "title": "GraphStorage.final_neighborhs",
+    "title": "StorageGraphs.final_neighborhs",
     "category": "method",
     "text": "final_neighborhs(g, dep::Pair; dir=:out)\n\nReturn the vertex indices for the neighbors at the end of the dependency chain.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.findnodes-Tuple{Any,Symbol}",
+    "location": "#StorageGraphs.findnodes-Tuple{Any,Symbol}",
     "page": "Home",
-    "title": "GraphStorage.findnodes",
+    "title": "StorageGraphs.findnodes",
     "category": "method",
     "text": "findnodes(g, name::Symbol)\n\nFinds the nodes containing name.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.nextid-Tuple{Any,Pair}",
+    "location": "#StorageGraphs.get_prop-Tuple{StorageGraph,Integer}",
     "page": "Home",
-    "title": "GraphStorage.nextid",
+    "title": "StorageGraphs.get_prop",
+    "category": "method",
+    "text": "get_prop(g, v)\nget_prop(g, e)\nget_prop(g, s, d)\n\nReturn the specific property (data for vertices, ids for edges) defined for graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). If property is not defined, return an error.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#StorageGraphs.nextid-Tuple{Any,Pair}",
+    "page": "Home",
+    "title": "StorageGraphs.nextid",
     "category": "method",
     "text": "nextid(g, dep::Pair)\n\nFind the next available id such that a dead end (a node with no outgoing paths) along the dependency chain (dep) is continued. If there is no such case, it gives the maximum id (see walkdep).\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.nodevals-Tuple{Any,Symbol}",
+    "location": "#StorageGraphs.nodevals-Tuple{Any,Symbol}",
     "page": "Home",
-    "title": "GraphStorage.nodevals",
+    "title": "StorageGraphs.nodevals",
     "category": "method",
     "text": "nodevals(g, name::Symbol)\n\nReturn an array of the values corresponding to name. See also findnodes.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.on_path-Tuple{Any,Any,Any}",
+    "location": "#StorageGraphs.on_path-Tuple{Any,Any,Any}",
     "page": "Home",
-    "title": "GraphStorage.on_path",
+    "title": "StorageGraphs.on_path",
     "category": "method",
     "text": "on_path(g, v, path)\n\nCheck if the vertex is on the given path.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.paths_through-Tuple{Any,Integer}",
+    "location": "#StorageGraphs.paths_through-Tuple{Any,Integer}",
     "page": "Home",
-    "title": "GraphStorage.paths_through",
+    "title": "StorageGraphs.paths_through",
     "category": "method",
     "text": "paths_through(g, v::Integer; dir=:out)\n\nReturn a vector of the paths going through the given vertex. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.walkdep-Tuple{Any,Pair}",
+    "location": "#StorageGraphs.set_prop!-Tuple{StorageGraph,Integer,NamedTuple}",
     "page": "Home",
-    "title": "GraphStorage.walkdep",
+    "title": "StorageGraphs.set_prop!",
+    "category": "method",
+    "text": "set_prop!(g, val)\nset_prop!(g, v, val)\nset_prop!(g, e, val)\nset_prop!(g, s, d, val)\n\nSet (replace) the specific property (data for vertices, ids for edges, max id for the graph) with value val in graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). Will return false if vertex or edge does not exist, true otherwise.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#StorageGraphs.walkdep-Tuple{Any,Pair}",
+    "page": "Home",
+    "title": "StorageGraphs.walkdep",
     "category": "method",
     "text": "function walkdep(g, dep::Pair; stopcond=(g,v)->false)\n\nWalk along the dependency chain, but only on already existing paths, and return the last node and the compatible paths.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.walkpath-Tuple{Any,Array{T,1} where T,Integer}",
+    "location": "#StorageGraphs.walkpath-Tuple{Any,Array{T,1} where T,Integer}",
     "page": "Home",
-    "title": "GraphStorage.walkpath",
+    "title": "StorageGraphs.walkpath",
     "category": "method",
     "text": "walkpath(g, paths, start; dir=:out, stopcond=(g,v)->false)\n\nWalk on the given paths starting from start and return the last nodes. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.add_node!-Tuple{Any,NamedTuple}",
+    "location": "#LightGraphs.SimpleGraphs.add_edge!-Tuple{StorageGraph,Vararg{Any,N} where N}",
     "page": "Home",
-    "title": "GraphStorage.add_node!",
+    "title": "LightGraphs.SimpleGraphs.add_edge!",
     "category": "method",
-    "text": "add_node!(g, val::NamedTuple)\n\nAdd a new node to the storage graph.\n\n\n\n\n\n"
+    "text": "add_edge!(g, u, v, d)\n\nAdd an edge (u, v) to the StorageGraph g with the given id. Return true if the edge has been added, false otherwise.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.extractvals-Tuple{Any,Any}",
+    "location": "#LightGraphs.SimpleGraphs.add_vertex!-Tuple{StorageGraph}",
     "page": "Home",
-    "title": "GraphStorage.extractvals",
+    "title": "LightGraphs.SimpleGraphs.add_vertex!",
+    "category": "method",
+    "text": "add_vertex!(g)\nadd_vertex!(g, data)\n\nAdd a vertex to the StorageGraph g with optional data given by the NamedTuple data. Return true if the vertex has been added, false otherwise.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#StorageGraphs.extractvals-Tuple{Any,Any}",
+    "page": "Home",
+    "title": "StorageGraphs.extractvals",
     "category": "method",
     "text": "extractvals(nodes, name)\n\nReturn an array of values corresponding to name form the array of NamedTuples nodes.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.ordered_dependency-Tuple{Any,Any,Vararg{Any,N} where N}",
+    "location": "#StorageGraphs.ordered_dependency-Tuple{Any,Any,Vararg{Any,N} where N}",
     "page": "Home",
-    "title": "GraphStorage.ordered_dependency",
+    "title": "StorageGraphs.ordered_dependency",
     "category": "method",
     "text": "ordered_dependency(a, b, inner_deps...)\n\nReturn a vector of dependency chains such that the elements of a are linked to the ones in b in such a way that the order is preserved.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.walkpath!-NTuple{5,Any}",
+    "location": "#StorageGraphs.rem_prop!-Tuple{StorageGraph,Integer}",
     "page": "Home",
-    "title": "GraphStorage.walkpath!",
+    "title": "StorageGraphs.rem_prop!",
+    "category": "method",
+    "text": "rem_prop!(g, v)\nrem_prop!(g, e)\nrem_prop!(g, s, d)\n\nRemove the specific property (data for vertices, ids for edges) from graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). If property, vertex, or edge does not exist, will not do anything.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#StorageGraphs.walkpath!-NTuple{5,Any}",
+    "page": "Home",
+    "title": "StorageGraphs.walkpath!",
     "category": "method",
     "text": "walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)\n\nWalk on the given path and take an action at each node. The action is specified by a function action!(g, v, neighbors) and it can modify the graph.\n\n\n\n\n\n"
 },
 
 {
-    "location": "#GraphStorage.jl-1",
+    "location": "#StorageGraphs.jl-1",
     "page": "Home",
-    "title": "GraphStorage.jl",
+    "title": "StorageGraphs.jl",
     "category": "section",
-    "text": "Modules = [GraphStorage]"
+    "text": "Modules = [StorageGraphs]"
 },
 
 ]}
