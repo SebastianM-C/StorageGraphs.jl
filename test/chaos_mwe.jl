@@ -93,3 +93,7 @@ add_derived_values!(g, ic_dep, ic, l, l_alg)
 # draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 10cm, 10cm), plot_graph(g))
 
 end  # module Chaos_MWE
+
+@testset "API test" begin
+    using .Chaos_MWE
+end

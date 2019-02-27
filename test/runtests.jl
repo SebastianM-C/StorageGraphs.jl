@@ -8,16 +8,13 @@ tests = [
     "walk",
     "creation",
     "query",
-    "readme"
+    "readme",
+    "chaos_mwe"
 ]
 
 @testset "StorageGraphs.jl" begin
 for t in tests
     tp = joinpath(testdir, "$(t).jl")
     include(tp)
-end
-@testset "API test" begin
-    include("chaos_mwe.jl")
-    using .Chaos_MWE
 end
 end

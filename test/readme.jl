@@ -1,29 +1,51 @@
+module Readme
+
 using LightGraphs
-using MetaGraphs
 using GraphPlot, GraphPlot.Compose
 using StorageGraphs
+using Test
+using Logging
 
-layout = (x...)->spring_layout(x...; C=9)
-ns = 1
+log = SimpleLogger(stdout, Logging.Debug)
 
-g = MetaDiGraph(3)
-g.vprops[1] = Dict(:x=>1)
-g.vprops[2] = Dict(:x=>2)
-g.vprops[3] = Dict(:x=>3)
+function draw_graph(g, x, y, name::String, args...; ns=1, C=5)
+    layout = (x...)->spring_layout(x...; C=C)
+    draw(SVG("$(@__DIR__)/../assets/$name.svg", x*cm, y*cm),
+        plot_graph(g, layout=layout, nodesize=ns))
+end
 
-draw(SVG("$(@__DIR__)/../assets/ex1.svg", 12cm, 4cm),
-    gplot(g, nodelabel=[(x=1,),(x=2,),(x=3,)], layout=layout, nodesize=ns))
+g = StorageGraph()
+@test add_vertex!.(Ref(g), [(x=1,),(x=2,),(x=3,)]) |> all
+@test get_prop(g, 1) == (x=1,)
+@test get_prop(g, 2) == (x=2,)
+@test get_prop(g, 3) == (x=3,)
+
+draw_graph(g, 10, 4, "ex1")
+
+# with_logger(log) do
+#     add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
+# end
+
+@test_logs((:debug, (x = 1,) => (y = 1,)),
+           (:debug, (x = 2,) => (y = 4,)),
+           (:debug, (x = 3,) => (y = 9,)),
+    min_level=Logging.Debug, match_mode=:all,
+    add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],)))
+
+@test nv(g) == 6
+@test ne(g) == 3
+@test get_prop(g, 4) == (y=1,)
+@test get_prop(g, 5) == (y=4,)
+@test get_prop(g, 6) == (y=9,)
+
+draw_graph(g, 10, 4, "ex2", C=8)
+
+# Code snippets
+
+using StorageGraphs
 
 g = StorageGraph()
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
-
-plot_graph(g, layout=layout, nodesize=ns)
-draw(SVG("$(@__DIR__)/../assets/ex2.svg", 12cm, 4cm),
-    plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
-
-using StorageGraphs
-
-g = StorageGraph()
 
 # We can add the nodes one by one
 add_nodes!(g, (P=1,)=>(alg="alg1",))
@@ -50,3 +72,9 @@ add_derived_values!(g, ((P=2,),(alg="alg1",)), (x=2x,), (r=2results,))
 plot_graph(g)
 draw(SVG("$(@__DIR__)/../assets/complicated_graph.svg", 12cm, 10cm),
     plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
+
+end  # module Readme
+
+@testset "Readme" begin
+    using .Readme
+end

@@ -17,6 +17,8 @@ function nextid(g, dep::Pair)
         neighbors = inneighbors(g, v)
         # there is only one possible edge
         previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
+        # check if the node is isolated and there are no ingoing edges
+        isnothing(previ) && return g.maxid[]
         e = Edge(neighbors[previ], v)
         id = g.paths[e]
         # There cannot be more than one path since ids are unique and a different
