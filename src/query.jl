@@ -1,14 +1,35 @@
+import Base: getindex, getproperty
+
+function getindex(g::StorageGraph, v::Integer)
+    get_prop(g, v)
+end
+
 function getindex(g::StorageGraph, data::NamedTuple)
     !haskey(g.index, data) && error("':$data' is not an index")
     return g.index[data]
 end
 
+function getindex(g::StorageGraph, dep::Pair)
+    paths = paths_through(g, dep)
+    neighbors = final_neighborhs(g, dep)
+    Iterators.filter(v->on_path(g, v, paths), neighbors)
+end
+
+function getindex(g::StorageGraph, dep::Pair, name::Symbol)
+    get.(get_prop.(Ref(g), g[dep]), name, nothing)
+end
+
+function getindex(g::StorageGraph, name::Symbol, nodes::Vararg{NamedTuple})
+    paths = intersect(paths_through.(Ref(g), nodes)...)
+    neighbors = Iterators.filter(v->on_path(g,v,paths), outneighbors(g, g[nodes[end]]))
+    get.(get_prop.(Ref(g), neighbors), name, nothing)
+end
+
 function getproperty(g::StorageGraph, s::Symbol)
-    allkeys = keys.(keys(g.index))
-    if haskey(allkeys, s)
-        return extractvals(g, s)
+    if s ∉ fieldnames(StorageGraph)
+        return extractvals(findnodes(g, s), s)
     else # fallback to getfield
-        return getfield(obj, sym)
+        return getfield(g, s)
     end
 end
 
@@ -51,6 +72,7 @@ end
     final_neighborhs(g, dep::Pair; dir=:out)
 
 Return the vertex indices for the neighbors at the end of the dependency chain.
+Note: this assumes that the dependency chain is valid (all the nodes exist).
 """
 function final_neighborhs(g, dep::Pair; dir=:out)
     v = g[endof(dep)]
@@ -63,24 +85,15 @@ end
 Finds the nodes containing `name`.
 """
 function findnodes(g, name::Symbol)
-    findall(v -> haskey(g.data[v], name), g.index)
+    findall(v -> has_prop(g, v, name), g.index)
 end
 
 """
-    extractvals(nodes, name)
+    extractvals(nodes, name::Symbol)
 
 Return an array of values corresponding to `name` form the array of `NamedTuple`s
 `nodes`.
 """
-function extractvals(nodes, name)
+function extractvals(nodes, name::Symbol)
     [n[name] for n in nodes]
-end
-
-"""
-    nodevals(g, name::Symbol)
-
-Return an array of the values corresponding to `name`. See also [`findnodes`](@ref).
-"""
-function nodevals(g, name::Symbol)
-    extractvals(findnodes(g, name), name)
 end

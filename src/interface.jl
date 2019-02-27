@@ -1,5 +1,5 @@
 import Base:
-    eltype, show, ==, zero, copy, issubset, getindex
+    eltype, show, ==, zero, copy, issubset
 
 import LightGraphs:
     edgetype, nv, ne, vertices, edges, is_directed,
@@ -156,6 +156,6 @@ rem_prop!(g::StorageGraph{T}, u::Integer, v::Integer) where {T} = rem_prop!(g, E
 
 ==(x::StorageGraph, y::StorageGraph) = (x.graph == y.graph) && (x.data == y.data) && (x.paths == y.paths)
 
-copy(g::T) where {T} <: StorageGraph = deepcopy(g)
+copy(g::StorageGraph) = deepcopy(g)
 
 zero(g::StorageGraph{T}) where {T} = StorageGraph{T}(SimpleDiGraph{T}())
