@@ -15,10 +15,10 @@
     @test isempty(setdiff(findnodes(g, :E), [(E=1,),(E=2,),(E=3,)]))
     @test findnodes(g, :x) == NamedTuple[]
 
-    @test isempty(setdiff(g.A, [1]))
-    @test isempty(setdiff(g.D, [0.4]))
-    @test isempty(setdiff(g.B, [0.5, 0.6]))
-    @test isempty(setdiff(g.E, [1, 2, 3]))
+    @test isempty(setdiff(g[:A], [1]))
+    @test isempty(setdiff(g[:D], [0.4]))
+    @test isempty(setdiff(g[:B], [0.5, 0.6]))
+    @test isempty(setdiff(g[:E], [1, 2, 3]))
 
     p = paths_through(g, (A=1,)=>(B=0.5,))
     @test length(p) == 3

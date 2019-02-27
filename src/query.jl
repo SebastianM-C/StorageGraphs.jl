@@ -25,12 +25,8 @@ function getindex(g::StorageGraph, name::Symbol, nodes::Vararg{NamedTuple})
     get.(get_prop.(Ref(g), neighbors), name, nothing)
 end
 
-function getproperty(g::StorageGraph, s::Symbol)
-    if s ∉ fieldnames(StorageGraph)
-        return extractvals(findnodes(g, s), s)
-    else # fallback to getfield
-        return getfield(g, s)
-    end
+function getindex(g::StorageGraph, name::Symbol)
+    extractvals(findnodes(g, name), name)
 end
 
 """
