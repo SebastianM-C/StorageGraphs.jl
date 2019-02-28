@@ -11,7 +11,7 @@ function nextid(g, dep::Pair)
     dep_end, cpath = walkdep(g, dep)
     !haskey(g.index, dep_end) && return get_prop(g)
     v = g[dep_end]
-    if length(outneighbors(g, v)) > 0
+    if outdegree(g, v) > 0
         return get_prop(g)
     else
         neighbors = inneighbors(g, v)

@@ -9,9 +9,13 @@ using LightGraphs
    @test is_directed(StorageGraph)
    @test eltype(@inferred(StorageGraph{UInt8}())) == UInt8
    g = SimpleDiGraph(3)
+   add_edge!(g, 1, 2)
+   add_edge!(g, 2, 3)
    sg = StorageGraph(g)
+   add_edge!(sg, 1, 2, 1)
+   add_edge!(sg, 2, 3, 1)
    @test @inferred(StorageGraphs.fadj(sg, 2)) == LightGraphs.SimpleGraphs.fadj(g, 2)
-   @test @inferred(StorageGraphs.badj(g, 2)) == LightGraphs.SimpleGraphs.badj(g, 2)
+   @test @inferred(StorageGraphs.badj(sg, 2)) == LightGraphs.SimpleGraphs.badj(g, 2)
 end
 
 @testset "Elementary operations" begin

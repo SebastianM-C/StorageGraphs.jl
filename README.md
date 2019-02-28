@@ -32,9 +32,9 @@ the same id. For example if we have `x = [1, 2, 3]`, then the graph looks like t
 
 Now, let's consider that we have a function, say `f(x) = x^2`, and we apply it
 to our `x` and want to store the resulting `y = [1, 4, 9]`. We encode
-the fact that `y` was derived / computed from `x` by using edges
-oriented from the `x` nodes to the `y` nodes. We can compare the
-graph and the table representations
+the fact that `y` was derived / computed from `x` by using edges oriented from
+the `x` nodes to the `y` nodes. This creates a hierarchy in the data.
+We can compare the graph and the table representations:
 
 ![graph example](assets/ex2.svg)
 
@@ -64,23 +64,25 @@ add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 Note: `NamedTuple`s with a single element must use a comma.
 (`(a=1,)` is not the same as `(a=1)`)
 
-This package used a `MetaDiGraph` from [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl)
-for the graph and metadata. The metadata is stored in dictionaries with the keys
-being given by vertices or edges. There are two ways of querying the data in the
-graph: by using indexing and by using the relationships with other nodes.
+This package provides a custom a `AbstractGraph` type called `StorageGraph`
+(similar to `MetaDiGraph`s in [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl)).
+The metadata is stored in dictionaries with the keys being given by vertices or edges.
+For nodes the data is in the `g.data` field, while for edges in `g.paths`.
+The nodes of the graph can be found via the inverse dictionary `g.index` in
+which the keys are given by the data. The main search tool in the graph is
+the overloaded `getindex` function.
 
-- For the first kind, we can use `findnodes(g, :name)` to get an array of
-`NamedTuple`s representing the nodes containing the desired symbol. For example
-`findnodes(g, :x)` would return `[(x=1,),(x=2,),(x=3,)]` for the above graph.
-If we want to obtain an array with the values we can use `nodevals(g, :name)`
-instead. With the above example this would be `nodevals(g, :x)` and it would
-give `[1,2,3]` as expected.
+- One way to search is by symbols. For example, for the above graph `g[:x]`
+will give all the values corresponding to `:x` (`[1,2,3]`).
+**Important Note**: the order of the values is not necessary the same as the
+order given when the data was added. This is because the order of the edges
+in the graph is not inherently defined. This way of searching is equivalent with
+searching on columns in a table.
 
-- The other way of accessing the data would be by taking advantage of the graph
-structure. For example we can get the vertex indices of all the neighbors of
-a node and use that to get the values. This would be equivalent with a query
-based on the parent node. This is useful with more complicated graph structures,
-so an example will be provided later.
+- Other ways of searching take advantage of the graph structure. For example we
+could search for the nodes which descend from a given hierarchy. This requires a
+more complicated graph structure to exemplify, so concrete examples will be provided
+later.
 
 ## Tutorial and motivation
 
@@ -118,16 +120,18 @@ Up to this point the graph and the equivalent table are presented below:
 For the initial conditions we used a node for the algorithm (containing the name)
 and one for each of the produced values. Next, we will obtain our simulation results
 and add them to the graph.
+Note: It is crucial that we load the initial conditions from the graph since
+we must get them in the correct order.
 ```julia
 # retrieve the previously stored initial conditions
-x = [g.vprops[v][:data][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
+x = g[(P=1,)=>(alg="alg1",), :x]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 ```
 
 Here we presented another way of querying the graph. We used the fact
 the initial conditions depend on the previously stored parameters
-and we retrieved them as the neighbors in the graph.
+and we retrieved them based on the hierarchy.
 After this step we have
 
 ![graph with simulation results](assets/sim_graph.svg)
