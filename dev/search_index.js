@@ -9,6 +9,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "#LightGraphs.SimpleGraphs.add_vertex!-Tuple{StorageGraph}",
+    "page": "Home",
+    "title": "LightGraphs.SimpleGraphs.add_vertex!",
+    "category": "method",
+    "text": "add_vertex!(g)\nadd_vertex!(g, data)\n\nAdd a vertex to the StorageGraph g with optional data given by the NamedTuple data. Return true if the vertex has been added, false otherwise.\n\n\n\n\n\n"
+},
+
+{
     "location": "#StorageGraphs.add_bulk!-Tuple{Any,Any,Any}",
     "page": "Home",
     "title": "StorageGraphs.add_bulk!",
@@ -45,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "StorageGraphs.final_neighborhs",
     "category": "method",
-    "text": "final_neighborhs(g, dep::Pair; dir=:out)\n\nReturn the vertex indices for the neighbors at the end of the dependency chain.\n\n\n\n\n\n"
+    "text": "final_neighborhs(g, dep::Pair; dir=:out)\n\nReturn the vertex indices for the neighbors at the end of the dependency chain. Note: this assumes that the dependency chain is valid (all the nodes exist).\n\n\n\n\n\n"
 },
 
 {
@@ -57,11 +65,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#StorageGraphs.get_prop-Tuple{StorageGraph,Integer}",
+    "location": "#StorageGraphs.get_prop-Tuple{Any}",
     "page": "Home",
     "title": "StorageGraphs.get_prop",
     "category": "method",
-    "text": "get_prop(g, v)\nget_prop(g, e)\nget_prop(g, s, d)\n\nReturn the specific property (data for vertices, ids for edges) defined for graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). If property is not defined, return an error.\n\n\n\n\n\n"
+    "text": "get_prop(g)\nget_prop(g, v)\nget_prop(g, e)\nget_prop(g, s, d)\n\nReturn the specific property (data for vertices, ids for edges, max id for the graph) defined for graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). If property does not exist, return an empty collection.\n\n\n\n\n\n"
+},
+
+{
+    "location": "#StorageGraphs.has_prop-Tuple{StorageGraph,Integer,Symbol}",
+    "page": "Home",
+    "title": "StorageGraphs.has_prop",
+    "category": "method",
+    "text": "has_prop(g, v, prop)\nhas_prop(g, e, prop)\nhas_prop(g, s, d, prop)\n\nReturn true if the property prop belongs to the specific property (data for vertices, ids for dges) for graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). For nodes this will check if prop is a key of the node, while for edges it will check if prop belongs to the id list.\n\n\n\n\n\n"
 },
 
 {
@@ -70,14 +86,6 @@ var documenterSearchIndex = {"docs": [
     "title": "StorageGraphs.nextid",
     "category": "method",
     "text": "nextid(g, dep::Pair)\n\nFind the next available id such that a dead end (a node with no outgoing paths) along the dependency chain (dep) is continued. If there is no such case, it gives the maximum id (see walkdep).\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.nodevals-Tuple{Any,Symbol}",
-    "page": "Home",
-    "title": "StorageGraphs.nodevals",
-    "category": "method",
-    "text": "nodevals(g, name::Symbol)\n\nReturn an array of the values corresponding to name. See also findnodes.\n\n\n\n\n\n"
 },
 
 {
@@ -129,19 +137,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#LightGraphs.SimpleGraphs.add_vertex!-Tuple{StorageGraph}",
-    "page": "Home",
-    "title": "LightGraphs.SimpleGraphs.add_vertex!",
-    "category": "method",
-    "text": "add_vertex!(g)\nadd_vertex!(g, data)\n\nAdd a vertex to the StorageGraph g with optional data given by the NamedTuple data. Return true if the vertex has been added, false otherwise.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.extractvals-Tuple{Any,Any}",
+    "location": "#StorageGraphs.extractvals-Tuple{Any,Symbol}",
     "page": "Home",
     "title": "StorageGraphs.extractvals",
     "category": "method",
-    "text": "extractvals(nodes, name)\n\nReturn an array of values corresponding to name form the array of NamedTuples nodes.\n\n\n\n\n\n"
+    "text": "extractvals(nodes, name::Symbol)\n\nReturn an array of values corresponding to name form the array of NamedTuples nodes.\n\n\n\n\n\n"
 },
 
 {
