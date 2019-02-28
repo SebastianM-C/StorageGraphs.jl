@@ -47,31 +47,35 @@ using StorageGraphs
 g = StorageGraph()
 add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 
+###
+
+@test isempty(setdiff(g[:x], [1,2,3]))
+
+###
+
+using StorageGraphs
+
+g = StorageGraph()
+
 # We can add the nodes one by one
 add_nodes!(g, (P=1,)=>(alg="alg1",))
 # or in bulk
 add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
 
-plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 12cm, 4.5cm),
-    plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
+draw_graph(g, 10, 4, "ic_graph", C=8)
 
 simulation(x; alg) = alg == "alg1" ? x.+2 : x.^2
 
 # retrieve the previously stored initial conditions
-x = [g.data[v][:x] for v in final_neighborhs(g, (P=1,)=>(alg="alg1",))]
+x = g[(P=1,)=>(alg="alg1",), :x]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 
-plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 12cm, 6cm),
-    plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
+draw_graph(g, 10, 6, "sim_graph", C=8)
 
 add_derived_values!(g, ((P=2,),(alg="alg1",)), (x=2x,), (r=2results,))
 
-plot_graph(g)
-draw(SVG("$(@__DIR__)/../assets/complicated_graph.svg", 12cm, 10cm),
-    plot_graph(g, layout=layout, nodesize=ns, edgelabeldistx=0.5, edgelabeldisty=0.5))
+draw_graph(g, 11, 11, "complicated_graph", C=6)
 
 end  # module Readme
 
