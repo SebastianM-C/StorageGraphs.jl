@@ -121,7 +121,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#StorageGraphs.walkpath-Tuple{Any,Array{T,1} where T,Integer}",
+    "location": "#StorageGraphs.walkpath-Tuple{Any,Any,Integer}",
     "page": "Home",
     "title": "StorageGraphs.walkpath",
     "category": "method",
