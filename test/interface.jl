@@ -8,7 +8,9 @@ using LightGraphs
    @test nv(StorageGraph()) == 0
    @test ne(StorageGraph()) == 0
    @test is_directed(StorageGraph)
+   @test is_directed(StorageGraph())
    @test eltype(@inferred(StorageGraph{UInt8}())) == UInt8
+   @test @inferred(SimpleDiGraph(StorageGraph())) == SimpleDiGraph()
 
    g = SimpleDiGraph(3)
    add_edge!(g, 1, 2)

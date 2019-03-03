@@ -20,7 +20,9 @@
     @test isempty(setdiff(g[:D], [0.4]))
     @test isempty(setdiff(g[:B], [0.5, 0.6]))
     @test isempty(setdiff(g[:E], [1, 2, 3]))
-    @test isempty(setdiff(g[(:B,:E)], [[3,2,1],[0.5, 0.6]]))
+    B, E = g[(:B,:E)]
+    @test isempty(setdiff(B, [0.5, 0.6]))
+    @test isempty(setdiff(E, [3,2,1]))
 
     p = paths_through(g, (A=1,)=>(B=0.5,))
     @test length(p) == 3
