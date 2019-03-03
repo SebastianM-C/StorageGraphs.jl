@@ -2,24 +2,24 @@ module StorageGraphs
 
 export StorageGraph, add_nodes!, add_vertex!, add_derived_values!, add_path!,
     add_bulk!, nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
-    findnodes, get_prop, has_prop, set_prop!, plot_graph
+    findnodes, get_prop, has_prop, set_prop!, with, plot_graph
 
 using LightGraphs
 using LightGraphs.SimpleGraphs: SimpleEdge
 
 using GraphPlot
 
-struct StorageGraph{T<:Integer} <: AbstractGraph{T}
+struct StorageGraph{T<:Integer, N<:NamedTuple} <: AbstractGraph{T}
     graph::SimpleDiGraph{T}
-    data::Dict{T,NamedTuple}
+    data::Dict{T,N}
     paths::Dict{SimpleEdge{T},Vector{T}}
     maxid::Ref{T}
-    index::Dict{NamedTuple,T}
+    index::Dict{N,T}
 end
 
-function StorageGraph(x)
-    T = eltype(x)
-    g = SimpleDiGraph(x)
+function StorageGraph()
+    g = SimpleDiGraph()
+    T = eltype(g)
     data = Dict{T,NamedTuple}()
     paths = Dict{SimpleEdge{T},Vector{T}}()
     maxid = Ref(one(T))
@@ -28,12 +28,33 @@ function StorageGraph(x)
     StorageGraph(g, data, paths, maxid, index)
 end
 
-StorageGraph() = StorageGraph(SimpleDiGraph())
-StorageGraph{T}() where {T <: Integer} = StorageGraph(SimpleDiGraph{T}())
-StorageGraph{T}(x::Integer) where {T <: Integer} = StorageGraph(T(x))
+function StorageGraph{T}() where {T <: Integer}
+    graph = SimpleDiGraph{T}()
+    data = Dict{T,NamedTuple}()
+    paths = Dict{SimpleEdge{T},Vector{T}}()
+    maxid = Ref(one(T))
+    index = Dict{NamedTuple,T}()
+    StorageGraph(graph, data, paths, maxid, index)
+end
 
 # converts StorageGraph{Int} to StorageGraph{UInt8}
-StorageGraph{T}(g::StorageGraph) where {T <: Integer} = StorageGraph(SimpleDiGraph{T}(g.graph))
+function StorageGraph{T}(g::StorageGraph) where {T <: Integer}
+    graph = SimpleDiGraph{T}(g.graph)
+    data = Dict{T,NamedTuple}(g.data)
+    k = SimpleEdge{T}.(keys(g.paths))
+    paths = Dict{SimpleEdge{T},Vector{T}}(k.=>values(g.paths))
+    maxid = Ref{T}(g.maxid[])
+    index = Dict{NamedTuple,T}(g.index)
+    StorageGraph(graph, data, paths, maxid, index)
+end
+
+function StorageGraph(g::SimpleDiGraph{T}, data::Dict{T, N},
+        paths::Dict{SimpleEdge{T},Vector{T}}) where {T, N <: NamedTuple}
+    maxid = Ref(maximum(maximum.(values(paths)))+one(T))
+    index = Dict(values(data).=>keys(data))
+
+    StorageGraph(g, data, paths, maxid, index)
+end
 
 include("interface.jl")
 include("add.jl")

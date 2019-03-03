@@ -78,12 +78,12 @@ Walk on the given `paths` starting from `start` and return the last nodes.
 If `dir` is specified, use the corresponding edge direction
 (`:in` and `:out` are acceptable values).
 """
-function walkpath(g, paths::Vector, start::Integer; dir=:out, stopcond=(g,v)->false)
+function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false)
     (dir == :out) ? walkpath(g, paths, start, outneighbors, stopcond=stopcond) :
         walkpath(g, paths, start, inneighbors, stopcond=stopcond)
 end
 
-function walkpath(g, paths::Vector, start::Integer, neighborfn; stopcond=(g,v)->false)
+function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
     result = Vector{eltype(g)}(undef, length(paths))
     @threads for i ∈ eachindex(paths)
         result[i] = walkpath(g, paths[i], start, neighborfn, stopcond=stopcond)
@@ -112,4 +112,30 @@ function walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)
         start = neighbors[nexti]
     end
     return start
+end
+
+function walkcond(g, path, conditions, nodes, neighborfn; stopcond=(g,v)->false)
+    start = g[nodes[1]]
+    # @show path
+    while !stopcond(g, start)
+        neighbors = neighborfn(g, start)
+        nexti = findfirst(n->on_path(g, n, path), neighbors)
+        if nexti isa Nothing
+            break
+        end
+        found = false
+        satisfies_cond = false
+        for (name,cond) in conditions
+            # @show g[start]
+            if has_prop(g, start, name)
+                found = true
+                satisfies_cond = cond(g[start])
+                # @show cond(g[start])
+                break
+            end
+        end
+        (found && !satisfies_cond) && return false
+        start = neighbors[nexti]
+    end
+    return true
 end

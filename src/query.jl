@@ -4,11 +4,6 @@ function getindex(g::StorageGraph, v::Integer)
     get_prop(g, v)
 end
 
-function getindex(g::StorageGraph, data::NamedTuple)
-    !haskey(g.index, data) && error("':$data' is not an index")
-    return g.index[data]
-end
-
 function getindex(g::StorageGraph, dep::Pair)
     paths = paths_through(g, dep)
     neighbors = final_neighborhs(g, dep)
@@ -19,15 +14,50 @@ function getindex(g::StorageGraph, dep::Pair, name::Symbol)
     get.(get_prop.(Ref(g), g[dep]), name, nothing)
 end
 
+function getindex(g::StorageGraph, f::Function, nodes::Vararg{NamedTuple})
+    paths = filter_paths(g, f, nodes...)
+    vs = Iterators.filter(v->on_path(g,v,paths), outneighbors(g, g[nodes[end]]))
+    get_prop.(Ref(g), vs)
+end
+
+function getindex(g::StorageGraph, name::Symbol, f::Function, nodes::Vararg{NamedTuple})
+    paths = filter_paths(g, f, nodes...)
+    outn = outneighbors(g, g[nodes[end]])
+    i = findfirst(n->has_prop(g, n, name), outn)
+    if i === nothing
+        vs = walkpath(g, paths, g[nodes[1]], stopcond=(g,v)->has_prop(g,v,name))
+        # filter out the cases where it stopped before reaching stopcond
+        filter!(v->has_prop(g,v,name), vs)
+        unique!(vs)
+    else
+        # there is no need to traverse the graph if the last given node has the
+        # desired nodes as outneighbors
+        vs = Iterators.filter(v->on_path(g,v,paths), outn)
+    end
+    get.(get_prop.(Ref(g), vs), name, nothing)
+end
+
+function getindex(g::StorageGraph, nodes::Vararg{NamedTuple})
+    return getindex(g, (g,p,n)->true, nodes...)
+end
+
+function getindex(g::StorageGraph, data::NamedTuple)
+    return g.index[data]
+end
+
 function getindex(g::StorageGraph, name::Symbol, nodes::Vararg{NamedTuple})
-    paths = intersect(paths_through.(Ref(g), nodes)...)
-    neighbors = Iterators.filter(v->on_path(g,v,paths), outneighbors(g, g[nodes[end]]))
-    get.(get_prop.(Ref(g), neighbors), name, nothing)
+    getindex(g, name, (g,p,n)->true, nodes...)
+end
+
+function getindex(g::StorageGraph, names::NTuple{N, Symbol}, nodes::Vararg{NamedTuple}) where {N}
+    (getindex(g, n, nodes...) for n in names)
 end
 
 function getindex(g::StorageGraph, name::Symbol)
     extractvals(findnodes(g, name), name)
 end
+
+getindex(g::StorageGraph) = []
 
 """
     paths_through(g, v::Integer; dir=:out)
@@ -92,4 +122,21 @@ Return an array of values corresponding to `name` form the array of `NamedTuple`
 """
 function extractvals(nodes, name::Symbol)
     [n[name] for n in nodes]
+end
+
+function filter_paths(g, f, nodes...)
+    filter(p->f(g,p,nodes), intersect(paths_through.(Ref(g), nodes)...))
+end
+
+function with(g::StorageGraph, name::Symbol, cond::Function)
+    (g,p,n)->begin
+        v = walkpath(g, p, g[n[1]], stopcond=(g,v)->has_prop(g,v,name))
+        cond(g[v])
+    end
+end
+
+function with(g::StorageGraph, conditions::Dict{Symbol,T}; stopcond=(g,v)->false) where {T<:Function}
+    (g,path,nodes) -> begin
+        walkcond(g, path, conditions, nodes, outneighbors; stopcond=stopcond)
+    end
 end
