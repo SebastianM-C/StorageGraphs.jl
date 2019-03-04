@@ -9,14 +9,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#LightGraphs.SimpleGraphs.add_vertex!-Tuple{StorageGraph}",
-    "page": "Home",
-    "title": "LightGraphs.SimpleGraphs.add_vertex!",
-    "category": "method",
-    "text": "add_vertex!(g)\nadd_vertex!(g, data)\n\nAdd a vertex to the StorageGraph g with optional data given by the NamedTuple data. Return true if the vertex has been added, false otherwise.\n\n\n\n\n\n"
-},
-
-{
     "location": "#StorageGraphs.add_bulk!-Tuple{Any,Any,Any}",
     "page": "Home",
     "title": "StorageGraphs.add_bulk!",
@@ -65,19 +57,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#StorageGraphs.get_prop-Tuple{Any}",
+    "location": "#StorageGraphs.paths_through-Tuple{Any,Integer}",
     "page": "Home",
-    "title": "StorageGraphs.get_prop",
+    "title": "StorageGraphs.paths_through",
     "category": "method",
-    "text": "get_prop(g)\nget_prop(g, v)\nget_prop(g, e)\nget_prop(g, s, d)\n\nReturn the specific property (data for vertices, ids for edges, max id for the graph) defined for graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). If property does not exist, return an empty collection.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.has_prop-Tuple{StorageGraph,Integer,Symbol}",
-    "page": "Home",
-    "title": "StorageGraphs.has_prop",
-    "category": "method",
-    "text": "has_prop(g, v, prop)\nhas_prop(g, e, prop)\nhas_prop(g, s, d, prop)\n\nReturn true if the property prop belongs to the specific property (data for vertices, ids for dges) for graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). For nodes this will check if prop is a key of the node, while for edges it will check if prop belongs to the id list.\n\n\n\n\n\n"
+    "text": "paths_through(g, v::Integer; dir=:out)\n\nReturn a vector of the paths going through the given vertex. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
 },
 
 {
@@ -97,22 +81,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#StorageGraphs.paths_through-Tuple{Any,Integer}",
-    "page": "Home",
-    "title": "StorageGraphs.paths_through",
-    "category": "method",
-    "text": "paths_through(g, v::Integer; dir=:out)\n\nReturn a vector of the paths going through the given vertex. If dir is specified, use the corresponding edge direction (:in and :out are acceptable values).\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.set_prop!-Tuple{StorageGraph,Integer,NamedTuple}",
-    "page": "Home",
-    "title": "StorageGraphs.set_prop!",
-    "category": "method",
-    "text": "set_prop!(g, val)\nset_prop!(g, v, val)\nset_prop!(g, e, val)\nset_prop!(g, s, d, val)\n\nSet (replace) the specific property (data for vertices, ids for edges, max id for the graph) with value val in graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). Will return false if vertex or edge does not exist, true otherwise.\n\n\n\n\n\n"
-},
-
-{
     "location": "#StorageGraphs.walkdep-Tuple{Any,Pair}",
     "page": "Home",
     "title": "StorageGraphs.walkdep",
@@ -129,51 +97,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "#LightGraphs.SimpleGraphs.add_edge!-Tuple{StorageGraph,Vararg{Any,N} where N}",
+    "location": "#StorageGraphs-1",
     "page": "Home",
-    "title": "LightGraphs.SimpleGraphs.add_edge!",
-    "category": "method",
-    "text": "add_edge!(g, u, v, d)\n\nAdd an edge (u, v) to the StorageGraph g with the given id. Return true if the edge has been added, false otherwise.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.extractvals-Tuple{Any,Symbol}",
-    "page": "Home",
-    "title": "StorageGraphs.extractvals",
-    "category": "method",
-    "text": "extractvals(nodes, name::Symbol)\n\nReturn an array of values corresponding to name form the array of NamedTuples nodes.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.ordered_dependency-Tuple{Any,Any,Vararg{Any,N} where N}",
-    "page": "Home",
-    "title": "StorageGraphs.ordered_dependency",
-    "category": "method",
-    "text": "ordered_dependency(a, b, inner_deps...)\n\nReturn a vector of dependency chains such that the elements of a are linked to the ones in b in such a way that the order is preserved.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.rem_prop!-Tuple{StorageGraph,Integer}",
-    "page": "Home",
-    "title": "StorageGraphs.rem_prop!",
-    "category": "method",
-    "text": "rem_prop!(g, v)\nrem_prop!(g, e)\nrem_prop!(g, s, d)\n\nRemove the specific property (data for vertices, ids for edges) from graph g, vertex v, or edge e (optionally referenced by source vertex s and destination vertex d). If property, vertex, or edge does not exist, will not do anything.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.walkpath!-NTuple{5,Any}",
-    "page": "Home",
-    "title": "StorageGraphs.walkpath!",
-    "category": "method",
-    "text": "walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)\n\nWalk on the given path and take an action at each node. The action is specified by a function action!(g, v, neighbors) and it can modify the graph.\n\n\n\n\n\n"
-},
-
-{
-    "location": "#StorageGraphs.jl-1",
-    "page": "Home",
-    "title": "StorageGraphs.jl",
+    "title": "StorageGraphs",
     "category": "section",
-    "text": "Modules = [StorageGraphs]"
+    "text": "StorageGraphs is a package for storing hierarchical data in graphs in a non-redundant way. This package aims to be useful when one has a combination of data and metadata or parameters and the use of tables would lead to a lot of redundancy in the corresponding columns.Modules = [StorageGraphs]\nPages = [\n  \"add.jl\",\n  \"query.jl\",\n  \"walk.jl\"\n]\nPrivate = false"
 },
 
 ]}
