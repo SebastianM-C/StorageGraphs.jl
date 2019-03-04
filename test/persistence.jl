@@ -30,6 +30,7 @@ end
         @test eltype(g_serialize.data) == eltype(g.data)
         @test eltype(g_serialize.index) == eltype(g.index)
         @test eltype(g_serialize.paths) == eltype(g.paths)
+        rm("test.jls")
     end
 
     savegraph("test.jld", g, "g", SGJLDFormat())
@@ -40,6 +41,7 @@ end
     @test eltype(g_jld.data) == eltype(g.data)
     @test eltype(g_jld.index) == eltype(g.index)
     @test eltype(g_jld.paths) == eltype(g.paths)
+    rm("test.jld")
 
     # savegraph("test.bson", g, :g, SGBSONFormat())
     # g_bson = loadgraph("test.bson", :g, SGBSONFormat())
@@ -49,5 +51,5 @@ end
     # @test eltype(g_bson.index) == eltype(g.index)
     # @test eltype(g_bson.paths) == eltype(g.paths)
 
-    rm.(["test.jls","test.jld"])#,"test.bson"])
+    # rm("test.bson")
 end

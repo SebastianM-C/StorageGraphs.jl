@@ -101,6 +101,7 @@ plot_graph(g)
         @test eltype(g_serialize.data) == eltype(g.data)
         @test eltype(g_serialize.index) == eltype(g.index)
         @test eltype(g_serialize.paths) == eltype(g.paths)
+        rm("test.jls")
     end
 
     save("test.jld", "g", g)
@@ -110,6 +111,7 @@ plot_graph(g)
     @test eltype(g_jld.data) == eltype(g.data)
     @test eltype(g_jld.index) == eltype(g.index)
     @test eltype(g_jld.paths) == eltype(g.paths)
+    rm("test.jld")
 
     # bson("test.bson", g=g)
     # g_bson = BSON.load("test.bson")[:g]
@@ -119,7 +121,7 @@ plot_graph(g)
     # @test eltype(g_bson.index) == eltype(g.index)
     # @test eltype(g_bson.paths) == eltype(g.paths)
 
-    rm.(["test.jls","test.jld"])#,"test.bson"])
+    # rm("test.bson")
 end
 
 end  # module Chaos_MWE
