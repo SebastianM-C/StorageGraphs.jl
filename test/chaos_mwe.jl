@@ -119,7 +119,7 @@ plot_graph(g)
     # @test eltype(g_bson.index) == eltype(g.index)
     # @test eltype(g_bson.paths) == eltype(g.paths)
 
-    rm.(["test.jls","test.jld","test.bson"])
+    rm.(["test.jls","test.jld"])#,"test.bson"])
 end
 
 end  # module Chaos_MWE
