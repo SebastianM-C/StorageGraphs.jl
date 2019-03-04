@@ -2,6 +2,10 @@ module Chaos_MWE
 
 using LightGraphs
 using StorageGraphs
+VERSION ≥ v"1.1" && using Serialization
+using JLD
+using BSON
+using Test
 
 g = StorageGraph()
 
@@ -12,8 +16,6 @@ add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.5,), (E=[10., 20., 30.],))
 add_bulk!(g, (A=1,)=>(D=0.4,)=>(B=0.55,), (E=[10., 25.],))
 
 plot_graph(g)
-using GraphPlot.Compose
-# draw(SVG("$(@__DIR__)/../assets/param_graph.svg", 10cm, 10cm), plot_graph(g))
 
 using Parameters
 
@@ -53,8 +55,7 @@ dep = (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=10.,)=>(ic_alg=SecondAlg(2, true),)
 q₀, q₂ = initial_conditions(SecondAlg(2, true))
 add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
 
-# plot_graph(g)
-# draw(SVG("$(@__DIR__)/../assets/ic_graph.svg", 10cm, 10cm), plot_graph(g))
+plot_graph(g)
 
 abstract type SimulationAlgorithm <: AbstractAlgorithm end
 using LinearAlgebra
@@ -81,7 +82,7 @@ function sim2(q₀, q₂, alg::Alg2)
 end
 
 ic_dep = ((A=1,),(D=0.4,),(B=0.55,),(E=10.,),(ic_alg=FirstAlg(2),))
-q₀, q₂ = initial_conditions(FirstAlg(2))
+q₀, q₂ = g[(:q₀, :q₂), ic_dep...]
 ic = (q₀=q₀, q₂=q₂)
 
 l = (l=sim1(q₀, q₂, Alg1()),)
@@ -89,8 +90,37 @@ l_alg = (alg=Alg1(),)
 
 add_derived_values!(g, ic_dep, ic, l, l_alg)
 
-# plot_graph(g)
-# draw(SVG("$(@__DIR__)/../assets/sim_graph.svg", 10cm, 10cm), plot_graph(g))
+plot_graph(g)
+
+@testset "Persistence external" begin
+    if VERSION ≥ v"1.1"
+        serialize("test.jls", g)
+        g_serialize = deserialize("test.jls")
+        @test g == g_serialize
+        @test eltype(g_serialize) == eltype(g)
+        @test eltype(g_serialize.data) == eltype(g.data)
+        @test eltype(g_serialize.index) == eltype(g.index)
+        @test eltype(g_serialize.paths) == eltype(g.paths)
+    end
+
+    save("test.jld", "g", g)
+    g_jld = load("test.jld", "g")
+    @test g == g_jld
+    @test eltype(g_jld) == eltype(g)
+    @test eltype(g_jld.data) == eltype(g.data)
+    @test eltype(g_jld.index) == eltype(g.index)
+    @test eltype(g_jld.paths) == eltype(g.paths)
+
+    bson("test.bson", g=g)
+    g_bson = BSON.load("test.bson")[:g]
+    @test g == g_bson
+    @test eltype(g_bson) == eltype(g)
+    @test eltype(g_bson.data) == eltype(g.data)
+    @test eltype(g_bson.index) == eltype(g.index)
+    @test eltype(g_bson.paths) == eltype(g.paths)
+
+    rm.(["test.jls","test.jld","test.bson"])
+end
 
 end  # module Chaos_MWE
 

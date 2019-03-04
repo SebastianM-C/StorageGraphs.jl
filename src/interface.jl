@@ -4,8 +4,7 @@ import Base:
 import LightGraphs:
     edgetype, nv, ne, vertices, edges, is_directed,
     add_vertex!, add_edge!, rem_vertex!, rem_edge!,
-    has_vertex, has_edge, inneighbors, outneighbors,
-    loadgraph, savegraph, AbstractGraphFormat
+    has_vertex, has_edge, inneighbors, outneighbors
 
 import LightGraphs.SimpleGraphs:
     SimpleDiGraph,
@@ -33,6 +32,11 @@ inneighbors(g::StorageGraph, v::Integer) = inneighbors(g.graph, v)
 outneighbors(g::StorageGraph, v::Integer) = fadj(g.graph, v)
 
 issubset(g::T, h::T) where T <: StorageGraph = issubset(g.graph, h.graph)
+
+SimpleDiGraph(g::StorageGraph) = g.graph
+is_directed(::Type{StorageGraph}) = true
+is_directed(::Type{StorageGraph{T}}) where {T} = true
+is_directed(g::StorageGraph) = true
 
 """
     add_edge!(g, u, v, d)
@@ -71,11 +75,6 @@ function rem_vertex!(g::StorageGraph, v::Integer)
     rem_prop!(g, v)
     rem_vertex!(g.graph, v)
 end
-
-SimpleDiGraph(g::StorageGraph) = g.graph
-is_directed(::Type{StorageGraph}) = true
-is_directed(::Type{StorageGraph{T}}) where {T} = true
-is_directed(g::StorageGraph) = true
 
 """
     get_prop(g)
