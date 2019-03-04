@@ -2,7 +2,8 @@ module StorageGraphs
 
 export StorageGraph, add_nodes!, add_vertex!, add_derived_values!, add_path!,
     add_bulk!, nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
-    findnodes, get_prop, has_prop, set_prop!, with, plot_graph
+    findnodes, get_prop, has_prop, set_prop!, with, plot_graph,
+    SGNativeFormat, SGJLDFormat
 
 using LightGraphs
 using LightGraphs.SimpleGraphs: SimpleEdge
@@ -60,6 +61,7 @@ include("interface.jl")
 include("add.jl")
 include("query.jl")
 include("walk.jl")
+include("persistence.jl")
 
 function plot_graph(g; args...)
     vlabels = [g.data[i] for i in vertices(g)]

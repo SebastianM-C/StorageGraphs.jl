@@ -4,7 +4,7 @@ using LightGraphs
 using StorageGraphs
 VERSION ≥ v"1.1" && using Serialization
 using JLD
-using BSON
+# using BSON
 using Test
 
 g = StorageGraph()
@@ -111,13 +111,13 @@ plot_graph(g)
     @test eltype(g_jld.index) == eltype(g.index)
     @test eltype(g_jld.paths) == eltype(g.paths)
 
-    bson("test.bson", g=g)
-    g_bson = BSON.load("test.bson")[:g]
-    @test g == g_bson
-    @test eltype(g_bson) == eltype(g)
-    @test eltype(g_bson.data) == eltype(g.data)
-    @test eltype(g_bson.index) == eltype(g.index)
-    @test eltype(g_bson.paths) == eltype(g.paths)
+    # bson("test.bson", g=g)
+    # g_bson = BSON.load("test.bson")[:g]
+    # @test g == g_bson
+    # @test eltype(g_bson) == eltype(g)
+    # @test eltype(g_bson.data) == eltype(g.data)
+    # @test eltype(g_bson.index) == eltype(g.index)
+    # @test eltype(g_bson.paths) == eltype(g.paths)
 
     rm.(["test.jls","test.jld","test.bson"])
 end

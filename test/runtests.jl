@@ -8,6 +8,7 @@ tests = [
     "walk",
     "creation",
     "query",
+    "persistence",
     "readme",
     "chaos_mwe"
 ]

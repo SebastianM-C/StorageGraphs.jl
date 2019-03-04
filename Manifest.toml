@@ -6,12 +6,6 @@ git-tree-sha1 = "2b6845cea546604fb4dca4e31414a6a59d39ddcd"
 uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
 version = "0.0.4"
 
-[[BSON]]
-deps = ["Test"]
-git-tree-sha1 = "922b43e731601b73f0e53f1cc94ea719b94f673a"
-uuid = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
-version = "0.2.1"
-
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
@@ -150,9 +144,11 @@ version = "1.1.1"
 
 [[JLD]]
 deps = ["Compat", "FileIO", "HDF5", "LegacyStrings", "Profile", "Random"]
-git-tree-sha1 = "95fd5d7f129918a75d0535aaaf5b8e235e6e0b0b"
+git-tree-sha1 = "c5a7ca257a189d89cb07663790a3e700cdd21894"
+repo-rev = "master"
+repo-url = "https://github.com/JuliaIO/JLD.jl.git"
 uuid = "4138dd39-2aa7-5051-a626-17a0bb65d9c8"
-version = "0.9.1"
+version = "0.9.1+"
 
 [[JSON]]
 deps = ["Dates", "Distributed", "Mmap", "Sockets", "Test", "Unicode"]
