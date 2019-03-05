@@ -1,8 +1,8 @@
 module StorageGraphs
 
-export StorageGraph, add_nodes!, add_vertex!, add_derived_values!, add_path!,
-    add_bulk!, nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
-    findnodes, get_prop, has_prop, set_prop!, with, plot_graph,
+export StorageGraph, add_nodes!, add_derived_values!, add_bulk!,
+    nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
+    get_prop, has_prop, set_prop!, with, plot_graph,
     SGNativeFormat, SGJLDFormat
 
 using LightGraphs

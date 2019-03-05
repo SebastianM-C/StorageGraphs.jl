@@ -15,7 +15,7 @@ function draw_graph(g, x, y, name::String, args...; ns=1, C=5)
 end
 
 g = StorageGraph()
-@test add_vertex!.(Ref(g), [(x=1,),(x=2,),(x=3,)]) |> all
+@test StorageGraphs.add_vertex!.(Ref(g), [(x=1,),(x=2,),(x=3,)]) |> all
 @test get_prop(g, 1) == (x=1,)
 @test get_prop(g, 2) == (x=2,)
 @test get_prop(g, 3) == (x=3,)

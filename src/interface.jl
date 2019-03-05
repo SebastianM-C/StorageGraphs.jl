@@ -39,7 +39,7 @@ is_directed(::Type{StorageGraph{T}}) where {T} = true
 is_directed(g::StorageGraph) = true
 
 """
-    add_edge!(g, u, v, d)
+    add_edge!(g, u, v, id)
 
 Add an edge `(u, v)` to the StorageGraph `g` with the given `id`.
 Return true if the edge has been added, false otherwise.
@@ -86,7 +86,7 @@ defined for graph `g`, vertex `v`, or edge `e` (optionally referenced by source
 vertex `s` and destination vertex `d`).
 If property does not exist, return an empty collection.
 """
-get_prop(g) = g.maxid[]
+get_prop(g::StorageGraph) = g.maxid[]
 get_prop(g::StorageGraph, v::Integer) = get(g.data, v, NamedTuple())
 get_prop(g::StorageGraph, e::SimpleEdge) = get(g.paths, e, eltype(g)[])
 get_prop(g::StorageGraph, u::Integer, v::Integer) = get_prop(g, Edge(u, v))

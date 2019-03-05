@@ -1,3 +1,5 @@
+using StorageGraphs: findnodes
+
 @testset "Data Query" begin
     g = StorageGraph()
 
