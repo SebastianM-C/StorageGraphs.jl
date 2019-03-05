@@ -13,7 +13,7 @@ makedocs(;
     ],
     repo="https://github.com/SebastianM-C/StorageGraphs.jl/blob/{commit}{path}#L{line}",
     sitename="StorageGraphs.jl",
-    authors="sebastian",
+    authors="Sebastian Micluța-Câmpeanu",
     assets=[],
 )
 
