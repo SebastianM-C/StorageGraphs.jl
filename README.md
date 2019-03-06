@@ -36,13 +36,22 @@ the fact that `y` was derived / computed from `x` by using edges oriented from
 the `x` nodes to the `y` nodes. This creates a hierarchy in the data.
 We can compare the graph and the table representations:
 
-![graph example](assets/ex2.svg)
+<table>
+  <tr>
+    <th>
 
 |  id   |   x   |   y   |
 |-------|-------|-------|
 |   1   |   1   |   1   |
 |   2   |   2   |   4   |
 |   3   |   3   |   9   |
+
+</th>
+    <th> 
+<img src="assets/ex2.svg">
+    </th>
+  </tr>
+</table>
 
 We can see that a row in the table corresponds to a path in the graph and a column
 in the table would be the collection of nodes with the same keys.
@@ -109,13 +118,22 @@ add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
 ```
 Up to this point the graph and the equivalent table are presented below:
 
-![graph with initial conditions](assets/ic_graph.svg)
+<table>
+  <tr>
+    <th>
 
 | id | P | alg  | x |
 |----|---|------|---|
 | 1  | 1 |"alg1"|10.|
 | 2  | 1 |"alg1"|20.|
 | 3  | 1 |"alg1"|30.|
+
+</th>
+    <th>
+      <img src="assets/ic_graph.svg">
+  </th>
+  </tr>
+  </table>
 
 For the initial conditions we used a node for the algorithm (containing the name)
 and one for each of the produced values. Next, we will obtain our simulation results
@@ -134,13 +152,22 @@ the initial conditions depend on the previously stored parameters
 and we retrieved them based on the hierarchy.
 After this step we have
 
-![graph with simulation results](assets/sim_graph.svg)
+<table>
+  <tr>
+    <th>
 
 | id | P | alg  | x | r |
 |----|---|------|---|---|
 | 1  | 1 |"alg1"|10.|12.|
 | 2  | 1 |"alg1"|20.|22.|
 | 3  | 1 |"alg1"|30.|32.|
+
+</th>
+<th>
+  <img src="assets/sim_graph.svg">
+  </th>
+  </tr>
+  <table>
 
 Now consider what would happen if in a second simulation we would have
 `P=2`, but still `"alg1"`. As we can see with increasing complexity
@@ -149,7 +176,9 @@ contain a lot of redundant information. In the graph we can only store
 them once and keep track of things through paths. This is the main
 motivation for this package.
 
-![graph with more data](assets/complicated_graph.svg)
+<table>
+  <tr>
+    <th>
 
 | id | P | alg  | x | r |
 |----|---|------|---|---|
@@ -159,3 +188,10 @@ motivation for this package.
 | 4  | 2 |"alg1"|20.|24.|
 | 5  | 2 |"alg1"|40.|44.|
 | 6  | 2 |"alg1"|60.|64.|
+
+</th>
+<th>
+  <img src="assets/complicated_graph.svg">
+  </th>
+  </tr>
+  </table>
