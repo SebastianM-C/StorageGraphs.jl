@@ -53,16 +53,18 @@ function walkdep(g, dep::Pair; stopcond=(g,v)->false)
         p = paths_through(g, current_node)
         if remaining isa Pair
             node = remaining[1]
-            if on_path(g, node, p)
+            possible_paths = paths_through(g, node, dir=:in)
+            if !isempty(possible_paths ∩ p)
                 current_node = node
-                compatible_paths = compatible_paths ∩ paths_through(g, node, dir=:in)
+                intersect!(compatible_paths, possible_paths)
             else
                 return current_node, compatible_paths
             end
             remaining = remaining[2]
         else
-            if on_path(g, remaining, p)
-                return remaining, compatible_paths ∩ paths_through(g, remaining, dir=:in)
+            possible_paths = paths_through(g, remaining, dir=:in)
+            if !isempty(possible_paths ∩ p)
+                return remaining, intersect!(compatible_paths, possible_paths)
             else
                 return current_node, compatible_paths
             end
