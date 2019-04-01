@@ -91,7 +91,7 @@ function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
     @threads for i in eachindex(p)
         result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
     end
-    return result
+    return Set(result)
 end
 
 function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->false)
