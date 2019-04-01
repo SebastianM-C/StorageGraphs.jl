@@ -55,16 +55,15 @@ identifying the values.
 """
 function add_bulk!(g, dep, vals)
     dep_end = endof(dep)
+    # nextid(g, dep) is expensive
+    # We can campute all ids in advance with only one call (for the first)
+    ids = range(nextid(g, dep), length=length(values(vals[1])), step=1)
     for i in eachindex(values(vals[1]))
-        add_nodes!(g, dep)
-        # decrease the id to stay on the same path
-        id = nextid(g, dep)
-        if id == get_prop(g)
-            id -= 1
-            set_prop!(g, id)
-        end
+        # created the path up to the nodes to be added
+        add_nodes!(g, dep, id=ids[i])
         val = (v[i] for v in vals)
-        add_nodes!(g, dep_end=>NamedTuple{keys(vals)}(val), id=id)
+        # add the values
+        add_nodes!(g, dep_end=>NamedTuple{keys(vals)}(val), id=ids[i])
     end
 end
 
