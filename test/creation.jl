@@ -10,7 +10,7 @@ using LightGraphs
     @test ne(g) == 2
     @test g.data == Dict(1=>(D=0.4,), 2=>(B=0.5,), 3=>(A=1,))
     @test g.index == Dict((D=0.4,)=>1, (B=0.5,)=>2, (A=1,)=>3)
-    @test g.paths == Dict(Edge(1,2)=>[1], Edge(3,1)=>[1])
+    @test g.paths == Dict(Edge(1,2)=>Set(1), Edge(3,1)=>Set(1))
     @test get_prop(g) == 2
     dep1 = (A=1,)=>(D=0.4,)=>(B=0.5,)
     dep2 = (A=1,)=>(D=0.4,)=>(B=0.6,)
@@ -41,10 +41,10 @@ end
         @test get_prop(g, 3) == (q₀=[0,1],q₂=[2,1])
         @test get_prop(g, 4) == (q₀=[0,2],q₂=[2,2])
         @test get_prop(g, 5) == (q₀=[0,3],q₂=[2,3])
-        @test get_prop(g, 1, 2) == [1,2,3]
-        @test get_prop(g, 2, 3) == [1]
-        @test get_prop(g, 2, 4) == [2]
-        @test get_prop(g, 2, 5) == [3]
+        @test get_prop(g, 1, 2) == Set([1,2,3])
+        @test get_prop(g, 2, 3) == Set(1)
+        @test get_prop(g, 2, 4) == Set(2)
+        @test get_prop(g, 2, 5) == Set(3)
 
         @test nextid(g, (A=1,)=>(B=0.5,)=>(x=1,)) == 4
         add_bulk!(g, (A=1,)=>(B=0.5,), (q₀=[[0,-1],[0,-2]], q₂=[[2,-1],[2,-2]]))
@@ -53,9 +53,9 @@ end
         @test get_prop(g, 6) == (B=0.5,)
         @test get_prop(g, 7) == (q₀=[0,-1],q₂=[2,-1])
         @test get_prop(g, 8) == (q₀=[0,-2],q₂=[2,-2])
-        @test get_prop(g, 1, 6) == [4,5]
-        @test get_prop(g, 6, 7) == [4]
-        @test get_prop(g, 6, 8) == [5]
+        @test get_prop(g, 1, 6) == Set([4,5])
+        @test get_prop(g, 6, 7) == Set(4)
+        @test get_prop(g, 6, 8) == Set(5)
     end
 
     l = (l=0.1:0.1:0.3,)
@@ -63,11 +63,11 @@ end
         add_derived_values!(g, ((A=1,), (B=0.4,)), val1, l, (t=1,))
         @test nv(g) == 12
         @test ne(g) == 13
-        @test get_prop(g, 1, 2) == [1,2,3]
+        @test get_prop(g, 1, 2) == Set([1,2,3])
         @test get_prop(g, 9) == (t=1,)
-        @test get_prop(g, 2, 3) == get_prop(g, 3, 9) == get_prop(g, 9, 10) == [1]
-        @test get_prop(g, 2, 4) == get_prop(g, 4, 9) == get_prop(g, 9, 11) == [2]
-        @test get_prop(g, 2, 5) == get_prop(g, 5, 9) == get_prop(g, 9, 12) == [3]
+        @test get_prop(g, 2, 3) == get_prop(g, 3, 9) == get_prop(g, 9, 10) == Set(1)
+        @test get_prop(g, 2, 4) == get_prop(g, 4, 9) == get_prop(g, 9, 11) == Set(2)
+        @test get_prop(g, 2, 5) == get_prop(g, 5, 9) == get_prop(g, 9, 12) == Set(3)
     end
 end
 

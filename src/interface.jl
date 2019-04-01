@@ -129,8 +129,7 @@ set_prop!(g::StorageGraph{T}, u::Integer, v::Integer, val::Integer) where {T} = 
 
 function set_prop!(g::StorageGraph, e::SimpleEdge, val::Integer)
     if has_edge(g, e)
-        haskey(g.paths, e) ? push!(g.paths[e], val) : push!(g.paths, e=>[val])
-        unique!(g.paths[e])
+        haskey(g.paths, e) ? push!(g.paths[e], val) : push!(g.paths, e=>Set(val))
         return true
     end
     return false

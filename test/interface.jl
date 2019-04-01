@@ -16,7 +16,7 @@ using LightGraphs
    add_edge!(g, 1, 2)
    add_edge!(g, 2, 3)
    data = Dict(1=>(a=1,),2=>(a=2,),3=>(a=3,))
-   paths = Dict(Edge(1, 2)=>[1], Edge(2, 3)=>[1])
+   paths = Dict(Edge(1, 2)=>Set(1), Edge(2, 3)=>Set(1))
    sg = StorageGraph(g, data, paths)
    @test @inferred(StorageGraph(g, data, paths)) == sg
    @test nv(sg) == nv(g)
@@ -57,7 +57,7 @@ end
    @test add_edge!(g, 1, 2, 1)
    @test nv(g) == 2
    @test ne(g) == 1
-   @test g.paths == Dict(Edge(1,2)=>[1])
+   @test g.paths == Dict(Edge(1,2)=>Set(1))
    @test has_prop(g, 1, 2, 1)
 
    @test g.maxid[] == get_prop(g) == 1

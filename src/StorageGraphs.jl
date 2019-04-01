@@ -13,7 +13,7 @@ using GraphPlot
 struct StorageGraph{T<:Integer, N<:NamedTuple} <: AbstractGraph{T}
     graph::SimpleDiGraph{T}
     data::Dict{T,N}
-    paths::Dict{SimpleEdge{T},Vector{T}}
+    paths::Dict{SimpleEdge{T},Set{T}}
     maxid::Ref{T}
     index::Dict{N,T}
 end
@@ -22,7 +22,7 @@ function StorageGraph()
     g = SimpleDiGraph()
     T = eltype(g)
     data = Dict{T,NamedTuple}()
-    paths = Dict{SimpleEdge{T},Vector{T}}()
+    paths = Dict{SimpleEdge{T},Set{T}}()
     maxid = Ref(one(T))
     index = Dict{NamedTuple,T}()
 
@@ -32,7 +32,7 @@ end
 function StorageGraph{T}() where {T <: Integer}
     graph = SimpleDiGraph{T}()
     data = Dict{T,NamedTuple}()
-    paths = Dict{SimpleEdge{T},Vector{T}}()
+    paths = Dict{SimpleEdge{T},Set{T}}()
     maxid = Ref(one(T))
     index = Dict{NamedTuple,T}()
     StorageGraph(graph, data, paths, maxid, index)
@@ -43,14 +43,14 @@ function StorageGraph{T}(g::StorageGraph) where {T <: Integer}
     graph = SimpleDiGraph{T}(g.graph)
     data = Dict{T,NamedTuple}(g.data)
     k = SimpleEdge{T}.(keys(g.paths))
-    paths = Dict{SimpleEdge{T},Vector{T}}(k.=>values(g.paths))
+    paths = Dict{SimpleEdge{T},Set{T}}(k.=>values(g.paths))
     maxid = Ref{T}(g.maxid[])
     index = Dict{NamedTuple,T}(g.index)
     StorageGraph(graph, data, paths, maxid, index)
 end
 
 function StorageGraph(g::SimpleDiGraph{T}, data::Dict{T, N},
-        paths::Dict{SimpleEdge{T},Vector{T}}) where {T, N <: NamedTuple}
+        paths::Dict{SimpleEdge{T},Set{T}}) where {T, N <: NamedTuple}
     maxid = Ref(maximum(maximum.(values(paths)))+one(T))
     index = Dict(values(data).=>keys(data))
 

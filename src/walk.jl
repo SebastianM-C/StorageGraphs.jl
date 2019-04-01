@@ -25,7 +25,7 @@ function nextid(g, dep::Pair)
         # path id would be neended only if there were a difference "further down"
         # the graph, but this is not the case since this node has no outgoing paths.
         @assert length(id) == 1
-        return id[1]
+        return first(id)
     end
 end
 
@@ -87,8 +87,9 @@ end
 
 function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
     result = Vector{eltype(g)}(undef, length(paths))
-    @threads for i ∈ eachindex(paths)
-        result[i] = walkpath(g, paths[i], start, neighborfn, stopcond=stopcond)
+    p = [paths...]
+    @threads for i in eachindex(p)
+        result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
     end
     return result
 end
@@ -118,7 +119,6 @@ end
 
 function walkcond(g, path, conditions, nodes, neighborfn; stopcond=(g,v)->false)
     start = g[nodes[1]]
-    # @show path
     while !stopcond(g, start)
         neighbors = neighborfn(g, start)
         nexti = findfirst(n->on_path(g, n, path), neighbors)
@@ -128,11 +128,9 @@ function walkcond(g, path, conditions, nodes, neighborfn; stopcond=(g,v)->false)
         found = false
         satisfies_cond = false
         for (name,cond) in conditions
-            # @show g[start]
             if has_prop(g, start, name)
                 found = true
                 satisfies_cond = cond(g[start])
-                # @show cond(g[start])
                 break
             end
         end
