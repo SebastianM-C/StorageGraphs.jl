@@ -101,7 +101,7 @@ function add_derived_values!(g, base_dep, base_val::NamedTuple, val::NamedTuple,
     deps = ordered_dependency(base_val, val, inner_deps...)
     for dep in deps
         full_dep = foldr(=>, (base_dep..., dep...))
-        @debug full_dep
+        @debug "Adding " full_dep
         add_nodes!(g, full_dep)
     end
 end
