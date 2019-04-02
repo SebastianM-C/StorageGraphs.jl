@@ -89,9 +89,9 @@ function ordered_dependency(a, b, inner_deps...)
 end
 
 """
-    add_derived_values!(g, base_dep, base_val, val, inner_deps...)
+    add_derived_values!(g, base_dep, base_vals, vals, inner_deps...)
 
-Add multiple values such that the elements in `base_val` and `val` are
+Add multiple values such that the elements in `base_vals` and `vals` are
 linked in such a way that the order is preserved. This is useful when
 one wants to add a vector of values derived from another vector.
 The dependency for the base values (`base_dep`) must be given as a collection
@@ -100,21 +100,43 @@ must be given as individual `NamedTuple`s.
 A new path is created for each value, but if a part already exists,
 it is continued (see [`nextid`](@ref)).
 """
-function add_derived_values!(g, base_dep, base_val::NamedTuple, val::NamedTuple, inner_deps...)
-    deps = ordered_dependency(base_val, val, inner_deps...)
+function add_derived_values!(g, base_dep, base_vals::NamedTuple, vals::NamedTuple, inner_deps...)
+    deps = ordered_dependency(base_vals, vals, inner_deps...)
     # For performance reasons we need to compute the ids ahead of adding the nodes.
     # We will check if the base values already exist
-    dep_end = endof(foldr(=>, base_dep))
+    dep_end, cpaths = walkdep(g, foldr(=>, base_dep))
     if haskey(g.index, dep_end) && outdegree(g, g[dep_end]) > 0
         # It is possible that some of the nodes are already added
-        dep_end, cpaths = walkdep(g, base_dep)
-        for v in vals
-            p = ifelse(haskey(g.index, v),
-                paths_through(g, g[v], dir=:in) ∩ cpaths, Set{eltype(g)}())
-            # There can be only one compatible path
-
-
-    ids = add_bulk!(g, foldr(=>, base_dep), base_val)
+        @debug "Compatible paths for base_dep" dep_end, cpaths
+        ids = Vector{Int}(undef, length(values(vals[1])))
+        maxid = get_prop(g)
+        for i in eachindex(deps)
+            # The base node for which we try to find the corresponding path id
+            node = deps[i][1]
+            @debug "At i=$i with node" node
+            # We now try to find the ids for the paths that must be continued
+            p = ifelse(haskey(g.index, node),
+                paths_through(g, g[node], dir=:in) ∩ cpaths, Set{eltype(g)}())
+            @debug "Possible paths" p
+            if length(p) > 0
+                dead_end = outdegree(g, g[node]) == 0
+                # A path is continued only if the path is a dead end
+                if length(p) == 1 && dead_end
+                    @debug "Can continue on path $p"
+                    ids[i] = first(p)
+                else
+                    @debug "Could not continue path $p. Using maxid $maxid" outdegree(g, g[node])
+                    ids[i] = maxid
+                    maxid += 1
+                end
+            else
+                ids[i] = maxid
+                maxid += 1
+            end
+        end
+    else
+        ids = add_bulk!(g, foldr(=>, base_dep), base_vals)
+    end
     for (dep,i) in zip(deps, ids)
         full_dep = foldr(=>, (base_dep..., dep...))
         @debug "Adding" full_dep
@@ -124,6 +146,7 @@ end
 
 function add_derived_values!(g, base_val::NamedTuple, val::NamedTuple, inner_deps...)
     deps = ordered_dependency(base_val, val, inner_deps...)
+    #TODO Try to compute the ids more efficiently
     for dep in deps
         full_dep = foldr(=>, dep)
         @debug full_dep
