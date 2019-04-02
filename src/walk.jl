@@ -8,8 +8,8 @@ along the dependency chain (`dep`) is continued. If there is no such case, it
 gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
-    dep_end, cpath = walkdep(g, dep)
-    @debug dep_end, cpath
+    dep_end, cpaths = walkdep(g, dep)
+    @debug dep_end, cpaths
     !haskey(g.index, dep_end) && return get_prop(g)
     v = g[dep_end]
     if outdegree(g, v) > 0
@@ -18,11 +18,11 @@ function nextid(g, dep::Pair)
         neighbors = inneighbors(g, v)
         @debug neighbors
         # there is only one possible edge
-        previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
+        previ = findfirst(n->on_path(g, n, cpaths, dir=:out), neighbors)
         # check if the node is isolated and there are no ingoing edges
         previ === nothing && return get_prop(g)
         e = Edge(neighbors[previ], v)
-        id = g.paths[e] ∩ cpath
+        id = g.paths[e] ∩ cpaths
         @debug id
         # There cannot be more than one path since ids are unique and a different
         # path id would be neended only if there were a difference "further down"

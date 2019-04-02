@@ -49,9 +49,11 @@ end
 
 Add the multiple values (`vals`) of the things identified by the keys of `vals`,
 with the dependency chain given by `dep`. The values of `vals` are assumed to
-be vectors. Each added node will correspond to an element of the vectors.
+be _equal length_ vectors. Each added node will correspond to an element of the vectors.
 Note: The dependency chain must contain all relevant information for
 identifying the values.
+
+The function returns the ids of the paths corresponding to the added values.
 """
 function add_bulk!(g, dep, vals)
     dep_end = endof(dep)
@@ -65,6 +67,7 @@ function add_bulk!(g, dep, vals)
         # add the values
         add_nodes!(g, dep_end=>NamedTuple{keys(vals)}(val), id=ids[i])
     end
+    return ids
 end
 
 """
@@ -99,10 +102,23 @@ it is continued (see [`nextid`](@ref)).
 """
 function add_derived_values!(g, base_dep, base_val::NamedTuple, val::NamedTuple, inner_deps...)
     deps = ordered_dependency(base_val, val, inner_deps...)
-    for dep in deps
+    # For performance reasons we need to compute the ids ahead of adding the nodes.
+    # We will check if the base values already exist
+    dep_end = endof(foldr(=>, base_dep))
+    if haskey(g.index, dep_end) && outdegree(g, g[dep_end]) > 0
+        # It is possible that some of the nodes are already added
+        dep_end, cpaths = walkdep(g, base_dep)
+        for v in vals
+            p = ifelse(haskey(g.index, v),
+                paths_through(g, g[v], dir=:in) ∩ cpaths, Set{eltype(g)}())
+            # There can be only one compatible path
+
+
+    ids = add_bulk!(g, foldr(=>, base_dep), base_val)
+    for (dep,i) in zip(deps, ids)
         full_dep = foldr(=>, (base_dep..., dep...))
-        @debug "Adding " full_dep
-        add_nodes!(g, full_dep)
+        @debug "Adding" full_dep
+        add_nodes!(g, full_dep, id=i)
     end
 end
 
