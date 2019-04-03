@@ -92,11 +92,11 @@ end
 
 function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
     length(paths) == 0 && return Set{eltype(g)}()
-    result = SharedArray{eltype(g)}(length(paths))
+    # result = SharedArray{eltype(g)}(length(paths))
     p = [paths...]
-    @sync @distributed for i in eachindex(p)
-        result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
-    end
+    result = pmap(i->walkpath(g, p[i], start, neighborfn, stopcond=stopcond),
+        eachindex(p), distributed=false)
+
     return Set{eltype(g)}(result)
 end
 
