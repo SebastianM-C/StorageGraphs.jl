@@ -1,4 +1,5 @@
-using Base.Threads
+using Distributed
+using SharedArrays
 
 """
     nextid(g, dep::Pair)
@@ -90,9 +91,9 @@ function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false)
 end
 
 function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
-    result = Vector{eltype(g)}(undef, length(paths))
+    result = SharedArray{eltype(g)}(length(paths))
     p = [paths...]
-    @threads for i in eachindex(p)
+    @sync @distributed for i in eachindex(p)
         result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
     end
     return Set(result)
