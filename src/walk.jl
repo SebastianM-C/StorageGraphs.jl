@@ -91,12 +91,13 @@ function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false)
 end
 
 function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
+    length(paths) == 0 && return Set{eltype(g)}()
     result = SharedArray{eltype(g)}(length(paths))
     p = [paths...]
     @sync @distributed for i in eachindex(p)
         result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
     end
-    return Set(result)
+    return Set{eltype(g)}(result)
 end
 
 function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->false)
