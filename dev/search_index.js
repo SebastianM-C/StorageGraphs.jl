@@ -53,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Adding data",
     "title": "StorageGraphs.add_bulk!",
     "category": "method",
-    "text": "add_bulk!(g, dep, vals)\n\nAdd the multiple values (vals) of the things identified by the keys of vals, with the dependency chain given by dep. The values of vals are assumed to be vectors. Each added node will correspond to an element of the vectors. Note: The dependency chain must contain all relevant information for identifying the values.\n\n\n\n\n\n"
+    "text": "add_bulk!(g, dep, vals)\n\nAdd the multiple values (vals) of the things identified by the keys of vals, with the dependency chain given by dep. The values of vals are assumed to be equal length vectors. Each added node will correspond to an element of the vectors. Note: The dependency chain must contain all relevant information for identifying the values.\n\nThe function returns the ids of the paths corresponding to the added values.\n\n\n\n\n\n"
 },
 
 {
@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Adding data",
     "title": "StorageGraphs.add_derived_values!",
     "category": "method",
-    "text": "add_derived_values!(g, base_dep, base_val, val, inner_deps...)\n\nAdd multiple values such that the elements in base_val and val are linked in such a way that the order is preserved. This is useful when one wants to add a vector of values derived from another vector. The dependency for the base values (base_dep) must be given as a collection of NamedTuples instead of a nested Pair. Also, any inner dependencies (inner_deps) must be given as individual NamedTuples. A new path is created for each value, but if a part already exists, it is continued (see nextid).\n\n\n\n\n\n"
+    "text": "add_derived_values!(g, base_dep, base_vals, vals, inner_deps...)\n\nAdd multiple values such that the elements in base_vals and vals are linked in such a way that the order is preserved. This is useful when one wants to add a vector of values derived from another vector. The dependency for the base values (base_dep) must be given as a collection of NamedTuples instead of a nested Pair. Also, any inner dependencies (inner_deps) must be given as individual NamedTuples. A new path is created for each value, but if a part already exists, it is continued (see nextid).\n\n\n\n\n\n"
 },
 
 {
