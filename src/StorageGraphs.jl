@@ -3,7 +3,7 @@ module StorageGraphs
 export StorageGraph, add_nodes!, add_derived_values!, add_bulk!,
     nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
     get_prop, has_prop, set_prop!, with, plot_graph,
-    SGNativeFormat, SGJLDFormat
+    SGNativeFormat, SGJLDFormat, SGBSONFormat
 
 using LightGraphs
 using LightGraphs.SimpleGraphs: SimpleEdge
@@ -64,8 +64,9 @@ include("walk.jl")
 include("persistence.jl")
 
 function plot_graph(g; args...)
+    format(s) = replace(string(s), r"Set\(\[(?<i>\d*(?>, \d*)*)\]\)"=>s"{\g<i>}")
     vlabels = [g.data[i] for i in vertices(g)]
-    elabels = [g.paths[i] for i in edges(g)]
+    elabels = [format(g.paths[i]) for i in edges(g)]
     gplot(g; nodelabel=vlabels, edgelabel=elabels, args...)
 end
 

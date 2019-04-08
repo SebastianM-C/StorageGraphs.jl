@@ -4,6 +4,7 @@ authors = ["Sebastian Micluța-Câmpeanu <m.c.sebastian95@gmail.com>"]
 version = "0.1.1"
 
 [deps]
+BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 GraphPlot = "a2cc645c-3eea-5389-862e-a155d0052231"
 JLD = "4138dd39-2aa7-5051-a626-17a0bb65d9c8"

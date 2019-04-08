@@ -43,13 +43,13 @@ end
     @test eltype(g_jld.paths) == eltype(g.paths)
     rm("test.jld")
 
-    # savegraph("test.bson", g, :g, SGBSONFormat())
-    # g_bson = loadgraph("test.bson", :g, SGBSONFormat())
-    # @test g == g_bson
-    # @test eltype(g_bson) == eltype(g)
-    # @test eltype(g_bson.data) == eltype(g.data)
-    # @test eltype(g_bson.index) == eltype(g.index)
-    # @test eltype(g_bson.paths) == eltype(g.paths)
+    savegraph("test.bson", g, :g, SGBSONFormat())
+    g_bson = loadgraph("test.bson", :g, SGBSONFormat())
+    @test g == g_bson
+    @test eltype(g_bson) == eltype(g)
+    @test eltype(g_bson.data) == eltype(g.data)
+    @test eltype(g_bson.index) == eltype(g.index)
+    @test eltype(g_bson.paths) == eltype(g.paths)
 
-    # rm("test.bson")
+    rm("test.bson")
 end

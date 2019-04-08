@@ -84,21 +84,20 @@ Walk on the given `paths` starting from `start` and return the last nodes.
 If `dir` is specified, use the corresponding edge direction
 (`:in` and `:out` are acceptable values).
 """
-function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false,
-        parallelism=:threads)
+function walkpath(g, paths, start::Integer; dir=:out, kwargs...)
     if dir == :out
-        walkpath(g, paths, start, outneighbors, stopcond=stopcond, parallelism=parallelism)
+        walkpath(g, paths, start, outneighbors; kwargs...)
     else
-        walkpath(g, paths, start, inneighbors, stopcond=stopcond, parallelism=parallelism)
+        walkpath(g, paths, start, inneighbors; kwargs...)
     end
 end
 
 function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false,
-        parallelism=:threads)
+        parallel_type=:threads)
     length(paths) == 0 && return Set{eltype(g)}()
     result = Vector{eltype(g)}(undef, length(paths))
     p = [paths...]
-    if parallelism == :threads
+    if parallel_type == :threads
         @threads for i in eachindex(p)
             result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
         end
