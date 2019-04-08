@@ -1,5 +1,4 @@
-using Distributed
-using SharedArrays
+using Base.Threads
 
 """
     nextid(g, dep::Pair)
@@ -85,17 +84,29 @@ Walk on the given `paths` starting from `start` and return the last nodes.
 If `dir` is specified, use the corresponding edge direction
 (`:in` and `:out` are acceptable values).
 """
-function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false)
-    (dir == :out) ? walkpath(g, paths, start, outneighbors, stopcond=stopcond) :
-        walkpath(g, paths, start, inneighbors, stopcond=stopcond)
+function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false,
+        parallelism=:threads)
+    if dir == :out
+        walkpath(g, paths, start, outneighbors, stopcond=stopcond, parallelism=parallelism)
+    else
+        walkpath(g, paths, start, inneighbors, stopcond=stopcond, parallelism=parallelism)
+    end
 end
 
-function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
+function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false,
+        parallelism=:threads)
     length(paths) == 0 && return Set{eltype(g)}()
-    # result = SharedArray{eltype(g)}(length(paths))
+    result = Vector{eltype(g)}(undef, length(paths))
     p = [paths...]
-    result = pmap(i->walkpath(g, p[i], start, neighborfn, stopcond=stopcond),
-        eachindex(p), distributed=false)
+    if parallelism == :threads
+        @threads for i in eachindex(p)
+            result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
+        end
+    else
+        for i in eachindex(p)
+            result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
+        end
+    end
 
     return Set{eltype(g)}(result)
 end
