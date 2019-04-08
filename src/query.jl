@@ -28,7 +28,6 @@ function getindex(g::StorageGraph, name::Symbol, f::Function, nodes::Vararg{Name
         vs = walkpath(g, paths, g[nodes[1]], stopcond=(g,v)->has_prop(g,v,name))
         # filter out the cases where it stopped before reaching stopcond
         filter!(v->has_prop(g,v,name), vs)
-        unique!(vs)
     else
         # there is no need to traverse the graph if the last given node has the
         # desired nodes as outneighbors
@@ -66,7 +65,7 @@ Return a vector of the paths going through the given vertex. If `dir` is specifi
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
 function paths_through(g, v::Integer; dir=:out)
-    v == 0 && return Int[]
+    v == 0 && return Set{Int}()
     if dir == :out
         out = outneighbors(g, v)
         if isempty(out)
@@ -82,9 +81,9 @@ function paths_through(g, v::Integer; dir=:out)
             es = [Edge(i, v) for i in in]
         end
     end
-    paths = Int[]
+    paths = Set{Int}()
     for e in es
-        append!(paths, g.paths[e])
+        union!(paths, g.paths[e])
     end
     return paths
 end

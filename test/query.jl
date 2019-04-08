@@ -28,7 +28,7 @@ using StorageGraphs: findnodes
 
     p = paths_through(g, (A=1,)=>(B=0.5,))
     @test length(p) == 3
-    @test p == [1, 2, 3]
+    @test p == Set([1, 2, 3])
     @test length(paths_through(g, (A=1,)=>(B=0.5,)=>(E=1.,))) == 0
     @test length(paths_through(g, (A=1,))) == 6
 

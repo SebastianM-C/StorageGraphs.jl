@@ -8,24 +8,28 @@ along the dependency chain (`dep`) is continued. If there is no such case, it
 gives the maximum id (see [`walkdep`](@ref)).
 """
 function nextid(g, dep::Pair)
-    dep_end, cpath = walkdep(g, dep)
+    dep_end, cpaths = walkdep(g, dep)
+    @debug "Paths compatible with the dependency chain" dep_end, cpaths
     !haskey(g.index, dep_end) && return get_prop(g)
     v = g[dep_end]
+    length(cpaths) == 0 && return get_prop(g)
     if outdegree(g, v) > 0
         return get_prop(g)
     else
         neighbors = inneighbors(g, v)
+        @debug neighbors
         # there is only one possible edge
-        previ = findfirst(n->on_path(g, n, cpath, dir=:out), neighbors)
+        previ = findfirst(n->on_path(g, n, cpaths, dir=:out), neighbors)
         # check if the node is isolated and there are no ingoing edges
         previ === nothing && return get_prop(g)
         e = Edge(neighbors[previ], v)
-        id = g.paths[e]
+        id = g.paths[e] ∩ cpaths
+        @debug "Continuing path $id"
         # There cannot be more than one path since ids are unique and a different
         # path id would be neended only if there were a difference "further down"
         # the graph, but this is not the case since this node has no outgoing paths.
         @assert length(id) == 1
-        return id[1]
+        return first(id)
     end
 end
 
@@ -80,17 +84,30 @@ Walk on the given `paths` starting from `start` and return the last nodes.
 If `dir` is specified, use the corresponding edge direction
 (`:in` and `:out` are acceptable values).
 """
-function walkpath(g, paths, start::Integer; dir=:out, stopcond=(g,v)->false)
-    (dir == :out) ? walkpath(g, paths, start, outneighbors, stopcond=stopcond) :
-        walkpath(g, paths, start, inneighbors, stopcond=stopcond)
+function walkpath(g, paths, start::Integer; dir=:out, kwargs...)
+    if dir == :out
+        walkpath(g, paths, start, outneighbors; kwargs...)
+    else
+        walkpath(g, paths, start, inneighbors; kwargs...)
+    end
 end
 
-function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false)
+function walkpath(g, paths, start::Integer, neighborfn; stopcond=(g,v)->false,
+        parallel_type=:threads)
+    length(paths) == 0 && return Set{eltype(g)}()
     result = Vector{eltype(g)}(undef, length(paths))
-    @threads for i ∈ eachindex(paths)
-        result[i] = walkpath(g, paths[i], start, neighborfn, stopcond=stopcond)
+    p = [paths...]
+    if parallel_type == :threads
+        @threads for i in eachindex(p)
+            result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
+        end
+    else
+        for i in eachindex(p)
+            result[i] = walkpath(g, p[i], start, neighborfn, stopcond=stopcond)
+        end
     end
-    return result
+
+    return Set{eltype(g)}(result)
 end
 
 function walkpath(g, path::Integer, start::Integer, neighborfn; stopcond=(g,v)->false)
@@ -118,7 +135,6 @@ end
 
 function walkcond(g, path, conditions, nodes, neighborfn; stopcond=(g,v)->false)
     start = g[nodes[1]]
-    # @show path
     while !stopcond(g, start)
         neighbors = neighborfn(g, start)
         nexti = findfirst(n->on_path(g, n, path), neighbors)
@@ -128,11 +144,9 @@ function walkcond(g, path, conditions, nodes, neighborfn; stopcond=(g,v)->false)
         found = false
         satisfies_cond = false
         for (name,cond) in conditions
-            # @show g[start]
             if has_prop(g, start, name)
                 found = true
                 satisfies_cond = cond(g[start])
-                # @show cond(g[start])
                 break
             end
         end

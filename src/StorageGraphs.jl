@@ -3,7 +3,7 @@ module StorageGraphs
 export StorageGraph, add_nodes!, add_derived_values!, add_bulk!,
     nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
     get_prop, has_prop, set_prop!, with, plot_graph,
-    SGNativeFormat, SGJLDFormat
+    SGNativeFormat, SGJLDFormat, SGBSONFormat
 
 using LightGraphs
 using LightGraphs.SimpleGraphs: SimpleEdge
@@ -13,7 +13,7 @@ using GraphPlot
 struct StorageGraph{T<:Integer, N<:NamedTuple} <: AbstractGraph{T}
     graph::SimpleDiGraph{T}
     data::Dict{T,N}
-    paths::Dict{SimpleEdge{T},Vector{T}}
+    paths::Dict{SimpleEdge{T},Set{T}}
     maxid::Ref{T}
     index::Dict{N,T}
 end
@@ -22,7 +22,7 @@ function StorageGraph()
     g = SimpleDiGraph()
     T = eltype(g)
     data = Dict{T,NamedTuple}()
-    paths = Dict{SimpleEdge{T},Vector{T}}()
+    paths = Dict{SimpleEdge{T},Set{T}}()
     maxid = Ref(one(T))
     index = Dict{NamedTuple,T}()
 
@@ -32,7 +32,7 @@ end
 function StorageGraph{T}() where {T <: Integer}
     graph = SimpleDiGraph{T}()
     data = Dict{T,NamedTuple}()
-    paths = Dict{SimpleEdge{T},Vector{T}}()
+    paths = Dict{SimpleEdge{T},Set{T}}()
     maxid = Ref(one(T))
     index = Dict{NamedTuple,T}()
     StorageGraph(graph, data, paths, maxid, index)
@@ -43,14 +43,14 @@ function StorageGraph{T}(g::StorageGraph) where {T <: Integer}
     graph = SimpleDiGraph{T}(g.graph)
     data = Dict{T,NamedTuple}(g.data)
     k = SimpleEdge{T}.(keys(g.paths))
-    paths = Dict{SimpleEdge{T},Vector{T}}(k.=>values(g.paths))
+    paths = Dict{SimpleEdge{T},Set{T}}(k.=>values(g.paths))
     maxid = Ref{T}(g.maxid[])
     index = Dict{NamedTuple,T}(g.index)
     StorageGraph(graph, data, paths, maxid, index)
 end
 
 function StorageGraph(g::SimpleDiGraph{T}, data::Dict{T, N},
-        paths::Dict{SimpleEdge{T},Vector{T}}) where {T, N <: NamedTuple}
+        paths::Dict{SimpleEdge{T},Set{T}}) where {T, N <: NamedTuple}
     maxid = Ref(maximum(maximum.(values(paths)))+one(T))
     index = Dict(values(data).=>keys(data))
 
@@ -64,8 +64,9 @@ include("walk.jl")
 include("persistence.jl")
 
 function plot_graph(g; args...)
+    format(s) = replace(string(s), r"Set\(\[(?<i>\d*(?>, \d*)*)\]\)"=>s"{\g<i>}")
     vlabels = [g.data[i] for i in vertices(g)]
-    elabels = [g.paths[i] for i in edges(g)]
+    elabels = [format(g.paths[i]) for i in edges(g)]
     gplot(g; nodelabel=vlabels, edgelabel=elabels, args...)
 end
 

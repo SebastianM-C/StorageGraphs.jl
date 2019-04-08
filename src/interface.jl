@@ -88,7 +88,7 @@ If property does not exist, return an empty collection.
 """
 get_prop(g::StorageGraph) = g.maxid[]
 get_prop(g::StorageGraph, v::Integer) = get(g.data, v, NamedTuple())
-get_prop(g::StorageGraph, e::SimpleEdge) = get(g.paths, e, eltype(g)[])
+get_prop(g::StorageGraph, e::SimpleEdge) = get(g.paths, e, Set{eltype(g)}[])
 get_prop(g::StorageGraph, u::Integer, v::Integer) = get_prop(g, Edge(u, v))
 
 """
@@ -129,8 +129,7 @@ set_prop!(g::StorageGraph{T}, u::Integer, v::Integer, val::Integer) where {T} = 
 
 function set_prop!(g::StorageGraph, e::SimpleEdge, val::Integer)
     if has_edge(g, e)
-        haskey(g.paths, e) ? push!(g.paths[e], val) : push!(g.paths, e=>[val])
-        unique!(g.paths[e])
+        haskey(g.paths, e) ? push!(g.paths[e], val) : push!(g.paths, e=>Set(val))
         return true
     end
     return false

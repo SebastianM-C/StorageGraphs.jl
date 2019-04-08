@@ -27,8 +27,11 @@ draw_graph(g, 10, 4, "ex1")
 # end
 
 @test_logs((:debug, (x = 1,) => (y = 1,)),
+           (:debug, "Paths compatible with the dependency chain"),
            (:debug, (x = 2,) => (y = 4,)),
+           (:debug, "Paths compatible with the dependency chain"),
            (:debug, (x = 3,) => (y = 9,)),
+           (:debug, "Paths compatible with the dependency chain"),
     min_level=Logging.Debug, match_mode=:all,
     add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],)))
 
