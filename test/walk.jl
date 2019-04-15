@@ -2,7 +2,7 @@ using Logging
 
 @testset "Graph traversal" begin
     g = StorageGraph()
-    @test walkdep(g, (a=1,)=>(b=1,)) == ((a=1,), Int[])
+    @test walkdep(g, (a=1,)=>(b=1,)) == ((a=1,), Set{Int}())
     StorageGraphs.add_vertex!(g, (a=1,))
     @test nextid(g, (a=1,)=>(b=1,)) == 1
     add_nodes!(g, (a=1,)=>(b=1,))
