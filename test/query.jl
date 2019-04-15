@@ -58,6 +58,6 @@ using StorageGraphs: findnodes
     @test g[:y, with(g,conditions), (A=1,)] == [0]
 
     @test @inferred paths_through(g, 1) == Set{eltype(g)}(1:6)
-    @test @inferred paths_through(g, (A=1,)) == Set{eltype(g)}(1:6)
+    @test @inferred paths_through(g, (A=1,)) == Set{eltype(g)}(1:8)
     @test @inferred paths_through(g, (A=1,)=>(D=0.4,)) == Set{eltype(g)}(1:6)
 end
