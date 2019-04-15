@@ -56,4 +56,8 @@ using StorageGraphs: findnodes
     add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=2,)=>(x=2,y=0))
     conditions = Dict(:D=>v->v.D < 0.5, :E=>v->v.E > 1)
     @test g[:y, with(g,conditions), (A=1,)] == [0]
+
+    @test @inferred paths_through(g, 1) == Set{eltype(g)}(1:6)
+    @test @inferred paths_through(g, (A=1,)) == Set{eltype(g)}(1:8)
+    @test @inferred paths_through(g, (A=1,)=>(D=0.4,)) == Set{eltype(g)}(1:6)
 end

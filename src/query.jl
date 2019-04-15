@@ -65,23 +65,23 @@ Return a vector of the paths going through the given vertex. If `dir` is specifi
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
 function paths_through(g, v::Integer; dir=:out)
-    v == 0 && return Set{Int}()
+    v == 0 && return Set{eltype(g)}()
     if dir == :out
         out = outneighbors(g, v)
         if isempty(out)
-            return Int[]
+            return Set{eltype(g)}()
         else
             es = [Edge(v, i) for i in out]
         end
     else
         in = inneighbors(g, v)
         if isempty(in)
-            return Int[]
+            return Set{eltype(g)}()
         else
             es = [Edge(i, v) for i in in]
         end
     end
-    paths = Set{Int}()
+    paths = Set{eltype(g)}()
     for e in es
         union!(paths, g.paths[e])
     end
@@ -89,11 +89,11 @@ function paths_through(g, v::Integer; dir=:out)
 end
 
 function paths_through(g, dep::Pair; dir=:out)
-    intersect(paths_through(g, dep[2], dir=dir), paths_through(g, dep[1], dir=dir))
+    intersect!(paths_through(g, dep[2], dir=dir), paths_through(g, dep[1], dir=dir))
 end
 
 function paths_through(g, node::NamedTuple; dir=:out)
-    !haskey(g.index, node) && return Int[]
+    !haskey(g.index, node) && return Set{eltype(g)}()
     paths_through(g, g[node], dir=dir)
 end
 
