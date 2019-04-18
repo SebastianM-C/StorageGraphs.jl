@@ -1,13 +1,23 @@
 import Base: getindex, getproperty
+using Base.Threads
 
 function getindex(g::StorageGraph, v::Integer)
     get_prop(g, v)
 end
 
 function getindex(g::StorageGraph, dep::Pair)
-    paths = paths_through(g, dep)
-    neighbors = final_neighborhs(g, dep)
-    Iterators.filter(v->on_path(g, v, paths), neighbors)
+    (lastn, cpaths), t = @timed walkdep(g, dep)
+    @debug "Finding last node on path took $t seconds."
+    if lastn == endof(dep) && length(cpaths) ≠ 0
+        neighbors = outneighbors(g, g[lastn])
+        mask = Vector{Bool}(undef, length(neighbors))
+        @threads for i in eachindex(neighbors)
+            mask[i] = on_path(g, neighbors[i], cpaths)
+        end
+        return neighbors[mask]
+    else
+        return NamedTuple[]
+    end
 end
 
 function getindex(g::StorageGraph, dep::Pair, name::Symbol)

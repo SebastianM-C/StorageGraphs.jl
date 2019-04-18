@@ -39,7 +39,7 @@ end
 Check if the vertex is on the given path.
 """
 function on_path(g, v, path; dir=:in)
-    !isempty(paths_through(g, v, dir=dir) ∩ path)
+    !isempty(intersect!(paths_through(g, v, dir=dir), path))
 end
 
 """

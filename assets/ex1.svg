@@ -13,35 +13,35 @@
     <path d="M0,0 L15,3.5 L0,7 z" stroke="context-stroke" fill="context-stroke"/>
   </marker>
 </defs>
-<g stroke-width="1.73" fill="#000000" fill-opacity="0.000" stroke="#D3D3D3" id="img-a9cfae8d-1">
+<g stroke-width="1.73" fill="#000000" fill-opacity="0.000" stroke="#D3D3D3" id="img-d5304861-1">
 </g>
-<g stroke-width="1.73" stroke="#D3D3D3" id="img-a9cfae8d-2">
+<g stroke-width="1.73" stroke="#D3D3D3" id="img-d5304861-2">
 </g>
-<g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-a9cfae8d-3">
+<g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-d5304861-3">
 </g>
-<g stroke-width="0" stroke="#000000" stroke-opacity="0.000" fill="#40E0D0" id="img-a9cfae8d-4">
-  <g transform="translate(91.67,35.5)">
-    <circle cx="0" cy="0" r="5.77" class="primitive"/>
-  </g>
-  <g transform="translate(47.52,3.33)">
-    <circle cx="0" cy="0" r="5.77" class="primitive"/>
-  </g>
+<g stroke-width="0" stroke="#000000" stroke-opacity="0.000" fill="#40E0D0" id="img-d5304861-4">
   <g transform="translate(8.33,36.67)">
     <circle cx="0" cy="0" r="5.77" class="primitive"/>
   </g>
+  <g transform="translate(34.31,3.33)">
+    <circle cx="0" cy="0" r="5.77" class="primitive"/>
+  </g>
+  <g transform="translate(91.67,29)">
+    <circle cx="0" cy="0" r="5.77" class="primitive"/>
+  </g>
 </g>
-<g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-a9cfae8d-5">
-  <g transform="translate(91.67,35.5)">
+<g font-size="4" stroke="#000000" stroke-opacity="0.000" fill="#000000" id="img-d5304861-5">
+  <g transform="translate(8.33,36.67)">
     <g class="primitive">
       <text text-anchor="middle" dy="0.35em">(x = 1,)</text>
     </g>
   </g>
-  <g transform="translate(47.52,3.33)">
+  <g transform="translate(34.31,3.33)">
     <g class="primitive">
       <text text-anchor="middle" dy="0.35em">(x = 2,)</text>
     </g>
   </g>
-  <g transform="translate(8.33,36.67)">
+  <g transform="translate(91.67,29)">
     <g class="primitive">
       <text text-anchor="middle" dy="0.35em">(x = 3,)</text>
     </g>
