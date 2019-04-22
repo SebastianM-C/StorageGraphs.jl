@@ -41,7 +41,7 @@ function getindex(g::StorageGraph, name::Symbol, f::Function, nodes::Vararg{Name
     else
         # there is no need to traverse the graph if the last given node has the
         # desired nodes as outneighbors
-        vs = Iterators.filter(v->on_path(g,v,paths), outn)
+        vs = filter!(v->on_path(g,v,paths), outn)
     end
     get.(get_prop.(Ref(g), vs), name, nothing)
 end
@@ -138,7 +138,7 @@ function extractvals(nodes, name::Symbol)
 end
 
 function filter_paths(g, f, nodes...)
-    filter(p->f(g,p,nodes), intersect(paths_through.(Ref(g), nodes)...))
+    filter!(p->f(g,p,nodes), intersect!(paths_through.(Ref(g), nodes)...))
 end
 
 function with(g::StorageGraph, name::Symbol, cond::Function)
