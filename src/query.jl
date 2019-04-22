@@ -16,7 +16,7 @@ function getindex(g::StorageGraph, dep::Pair)
         end
         return neighbors[mask]
     else
-        return NamedTuple[]
+        return eltype(g)[]
     end
 end
 
@@ -41,7 +41,7 @@ function getindex(g::StorageGraph, name::Symbol, f::Function, nodes::Vararg{Name
     else
         # there is no need to traverse the graph if the last given node has the
         # desired nodes as outneighbors
-        vs = filter!(v->on_path(g,v,paths), outn)
+        vs = filter(v->on_path(g,v,paths), outn)
     end
     get.(get_prop.(Ref(g), vs), name, nothing)
 end
