@@ -132,26 +132,3 @@ function walkpath!(g, path, start, neighborfn, action!; stopcond=(g,v)->false)
     end
     return start
 end
-
-function walkcond(g, path, conditions, nodes, neighborfn; stopcond=(g,v)->false)
-    start = g[nodes[1]]
-    while !stopcond(g, start)
-        neighbors = neighborfn(g, start)
-        nexti = findfirst(n->on_path(g, n, path), neighbors)
-        if nexti isa Nothing
-            break
-        end
-        found = false
-        satisfies_cond = false
-        for (name,cond) in conditions
-            if has_prop(g, start, name)
-                found = true
-                satisfies_cond = cond(g[start])
-                break
-            end
-        end
-        (found && !satisfies_cond) && return false
-        start = neighbors[nexti]
-    end
-    return true
-end

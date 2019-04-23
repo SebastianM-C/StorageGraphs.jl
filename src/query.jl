@@ -24,14 +24,14 @@ function getindex(g::StorageGraph, dep::Pair, name::Symbol)
     get.(get_prop.(Ref(g), g[dep]), name, nothing)
 end
 
-function getindex(g::StorageGraph, f::Function, nodes::Vararg{NamedTuple})
-    paths = filter_paths(g, f, nodes...)
+function getindex(g::StorageGraph, conditions::Dict{Symbol,F}, nodes::Vararg{NamedTuple}) where {F<:Function}
+    paths = filter_paths(g, nodes, conditions)
     vs = Iterators.filter(v->on_path(g,v,paths), outneighbors(g, g[nodes[end]]))
     get_prop.(Ref(g), vs)
 end
 
-function getindex(g::StorageGraph, name::Symbol, f::Function, nodes::Vararg{NamedTuple})
-    paths = filter_paths(g, f, nodes...)
+function getindex(g::StorageGraph, name::Symbol, conditions::Dict{Symbol,F}, nodes::Vararg{NamedTuple}) where {F<:Function}
+    paths = filter_paths(g, nodes, conditions)
     outn = outneighbors(g, g[nodes[end]])
     i = findfirst(n->has_prop(g, n, name), outn)
     if i === nothing
@@ -47,7 +47,7 @@ function getindex(g::StorageGraph, name::Symbol, f::Function, nodes::Vararg{Name
 end
 
 function getindex(g::StorageGraph, nodes::Vararg{NamedTuple})
-    return getindex(g, (g,p,n)->true, nodes...)
+    return getindex(g, Dict{Symbol,Function}(), nodes...)
 end
 
 function getindex(g::StorageGraph, data::NamedTuple)
@@ -55,7 +55,7 @@ function getindex(g::StorageGraph, data::NamedTuple)
 end
 
 function getindex(g::StorageGraph, name::Symbol, nodes::Vararg{NamedTuple})
-    getindex(g, name, (g,p,n)->true, nodes...)
+    getindex(g, name, Dict{Symbol,Function}(), nodes...)
 end
 
 function getindex(g::StorageGraph, names::NTuple{N, Symbol}, nodes::Vararg{NamedTuple}) where {N}
@@ -137,19 +137,26 @@ function extractvals(nodes, name::Symbol)
     [n[name] for n in nodes]
 end
 
-function filter_paths(g, f, nodes...)
-    filter!(p->f(g,p,nodes), intersect!(paths_through.(Ref(g), nodes)...))
-end
-
-function with(g::StorageGraph, name::Symbol, cond::Function)
-    (g,p,n)->begin
-        v = walkpath(g, p, g[n[1]], stopcond=(g,v)->has_prop(g,v,name))
-        cond(g[v])
+function filter_paths!(paths, g, conditions)
+    for (name, cond) in conditions
+        target = findnodes(g, name)
+        valid_vals = target[cond.(target)]
+        all_valid_paths = paths_through.(Ref(g), valid_vals)
+        valid_paths = Set{eltype(g)}()
+        for p in all_valid_paths
+            union!(valid_paths, p)
+        end
+        intersect!(paths, valid_paths)
     end
 end
 
-function with(g::StorageGraph, conditions::Dict{Symbol,T}; stopcond=(g,v)->false) where {T<:Function}
-    (g,path,nodes) -> begin
-        walkcond(g, path, conditions, nodes, outneighbors; stopcond=stopcond)
+function filter_paths(g, nodes, conditions)
+    possible_paths = paths_through.(Ref(g), nodes)
+    paths = possible_paths[1]
+    for p in possible_paths
+        intersect!(paths, p)
     end
+    filter_paths!(paths, g, conditions)
+
+    return paths
 end

@@ -44,9 +44,9 @@ using StorageGraphs: findnodes
     @test isempty(setdiff(g[:E, (A=1,), (B=0.5,)], [1, 2, 3, 5, 6]))
 
     @test isempty(setdiff(g[:E, (D=0.5,)], [5,6]))
-    @test isempty(setdiff(g[:E, with(g,:D,v->v.D>0.4), (A=1,)], [5,6]))
-    @test g[with(g,:D,v->v.D>0.4), (A=1,),(B=0.5,)] == [(E=5,),(E=6,)]
-    @test isempty(setdiff(g[:E, with(g,:D,v->v.D<0.5), (A=1,),(B=0.6,)], [1,2,3]))
+    @test isempty(setdiff(g[:E, Dict(:D=>v->v.D > 0.4), (A=1,)], [5,6]))
+    @test g[Dict(:D=>v->v.D>0.4), (A=1,),(B=0.5,)] == [(E=5,),(E=6,)]
+    @test isempty(setdiff(g[:E, Dict(:D=>v->v.D<0.5), (A=1,),(B=0.6,)], [1,2,3]))
 
     add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=1,)=>(x=1,y=2))
     @test isempty(setdiff(g[(:x,:y), (A=1,),(E=1,)], ([1],[2])))
@@ -55,7 +55,7 @@ using StorageGraphs: findnodes
 
     add_nodes!(g, (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=2,)=>(x=2,y=0))
     conditions = Dict(:D=>v->v.D < 0.5, :E=>v->v.E > 1)
-    @test g[:y, with(g,conditions), (A=1,)] == [0]
+    @test g[:y, conditions, (A=1,)] == [0]
 
     @test @inferred paths_through(g, 1) == Set{eltype(g)}(1:6)
     @test @inferred paths_through(g, (A=1,)) == Set{eltype(g)}(1:8)
