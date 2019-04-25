@@ -10,7 +10,9 @@ using LightGraphs.SimpleGraphs: SimpleEdge
 
 using GraphPlot
 
-struct StorageGraph{T<:Integer, N<:NamedTuple} <: AbstractGraph{T}
+abstract type AbstractStorageGraph{T} <: AbstractGraph{T} end
+
+struct StorageGraph{T<:Integer, N<:NamedTuple} <: AbstractStorageGraph{T}
     graph::SimpleDiGraph{T}
     data::Dict{T,N}
     paths::Dict{SimpleEdge{T},Set{T}}
