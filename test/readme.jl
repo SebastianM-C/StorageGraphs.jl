@@ -70,7 +70,7 @@ draw_graph(g, 10, 4, "ic_graph", C=8)
 simulation(x; alg) = alg == "alg1" ? x.+2 : x.^2
 
 # retrieve the previously stored initial conditions
-x = g[(P=1,)=>(alg="alg1",), :x]
+x = g[:x, (P=1,)=>(alg="alg1",)]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 

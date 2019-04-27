@@ -35,8 +35,8 @@ using StorageGraphs: findnodes
     @test g[1] == get_prop(g, 1) == (D=0.4,)
     @test g[g[(A=1,)]] == (A=1,)
     @test isempty(setdiff(get_prop.(Ref(g), g[(A=1,)=>(D=0.4,)]), [(B=0.5,),(B=0.6,)]))
-    @test isempty(setdiff(g[(A=1,)=>(D=0.4,), :B], [0.5, 0.6]))
-    @test isempty(setdiff(g[(A=1,)=>(D=0.4,)=>(B=0.5,), :E], [1, 2, 3]))
+    @test isempty(setdiff(g[:B, (A=1,)=>(D=0.4,)], [0.5, 0.6]))
+    @test isempty(setdiff(g[:E, (A=1,)=>(D=0.4,)=>(B=0.5,)], [1, 2, 3]))
     @test isempty(setdiff(g[:B, (A=1,), (D=0.4,)], [0.5, 0.6]))
 
     add_bulk!(g, (A=1,)=>(D=0.5,)=>(B=0.5,), (E=[5, 6],))

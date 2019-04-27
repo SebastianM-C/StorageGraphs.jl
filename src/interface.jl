@@ -31,6 +31,9 @@ has_vertex(g::StorageGraph, x...) = has_vertex(g.graph, x...)
 inneighbors(g::StorageGraph, v::Integer) = inneighbors(g.graph, v)
 outneighbors(g::StorageGraph, v::Integer) = fadj(g.graph, v)
 
+inneighbors(g::StorageGraph, n::NamedTuple) = inneighbors(g, g.index[n])
+outneighbors(g::StorageGraph, n::NamedTuple) = outneighbors(g, g.index[n])
+
 issubset(g::T, h::T) where T <: StorageGraph = issubset(g.graph, h.graph)
 
 SimpleDiGraph(g::StorageGraph) = g.graph

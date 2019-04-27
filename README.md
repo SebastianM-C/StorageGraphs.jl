@@ -47,7 +47,7 @@ We can compare the graph and the table representations:
 |   3   |   3   |   9   |
 
 </th>
-    <th> 
+    <th>
 <img src="assets/ex2.svg">
     </th>
   </tr>
@@ -142,7 +142,7 @@ Note: It is crucial that we load the initial conditions from the graph since
 we must get them in the correct order.
 ```julia
 # retrieve the previously stored initial conditions
-x = g[(P=1,)=>(alg="alg1",), :x]
+x = g[:x, (P=1,)=>(alg="alg1",)]
 results = simulation(x, alg="alg1")
 add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
 ```

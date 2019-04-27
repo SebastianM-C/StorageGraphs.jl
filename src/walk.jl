@@ -51,14 +51,15 @@ the last node and the compatible paths.
 function walkdep(g, dep::Pair; stopcond=(g,v)->false)
     current_node = dep[1]
     remaining = dep[2]
-    compatible_paths = paths_through(g, current_node) ∪ paths_through(g, current_node, dir=:in)
+    pset = Set{eltype(g)}()
+    compatible_paths = paths_through(g, current_node, dir=:both)
     # @debug compatible_paths
     while !stopcond(g, current_node)
-        p = paths_through(g, current_node)
         if remaining isa Pair
             node = remaining[1]
-            possible_paths = paths_through(g, node, dir=:in)
-            if !isempty(possible_paths ∩ p)
+            possible_paths = paths_through!(empty!(pset), g, node, dir=:in)
+            intersect!(possible_paths, compatible_paths)
+            if !isempty(possible_paths)
                 current_node = node
                 intersect!(compatible_paths, possible_paths)
             else
@@ -66,9 +67,11 @@ function walkdep(g, dep::Pair; stopcond=(g,v)->false)
             end
             remaining = remaining[2]
         else
-            possible_paths = paths_through(g, remaining, dir=:in)
-            if !isempty(possible_paths ∩ p)
-                return remaining, intersect!(compatible_paths, possible_paths)
+            # we have reached the end of the dependency chain
+            possible_paths = paths_through!(empty!(pset), g, remaining, dir=:in)
+            intersect!(possible_paths, compatible_paths)
+            if !isempty(possible_paths)
+                return remaining, possible_paths
             else
                 return current_node, compatible_paths
             end
