@@ -18,9 +18,9 @@ end
 @testset "Persistence" begin
     g = StorageGraph()
     dep = ((a=1,),(b=2,),(c=3,))
-    add_bulk!(g, foldr(=>, dep), (d=rand(2),))
+    add_nodes!(g, foldr(=>, (dep..., (d=rand(2),))))
     d = g[:d, dep...]
-    add_derived_values!(g, dep, (d=d,), (x=randstring.(1:2),), (y=TestStruct(),))
+    add_nodes!(g, foldr(=>, (dep..., (d=d,), (x=randstring.(1:2),), (y=TestStruct(),))))
 
     if VERSION ≥ v"1.1"
         savegraph("test.jls", g, SGNativeFormat())

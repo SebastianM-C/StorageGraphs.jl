@@ -29,6 +29,8 @@ using LightGraphs
    @test @inferred(StorageGraphs.fadj(sg, 2)) == LightGraphs.SimpleGraphs.fadj(g, 2)
    @test @inferred(StorageGraphs.badj(sg, 2)) == LightGraphs.SimpleGraphs.badj(g, 2)
 
+   @test outneighbors(sg, 1) == outneighbors(sg, (a=1,)) == [2]
+
    ng = StorageGraph{UInt8}(sg)
    @test eltype(ng) == UInt8
    @test eltype(ng.data) == Pair{UInt8,NamedTuple}

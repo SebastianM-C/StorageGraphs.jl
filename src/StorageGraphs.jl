@@ -1,6 +1,6 @@
 module StorageGraphs
 
-export StorageGraph, add_nodes!, add_derived_values!, add_bulk!,
+export StorageGraph, add_nodes!, add_bulk!,
     nextid, paths_through, on_path, walkpath, walkdep, final_neighborhs,
     get_prop, has_prop, set_prop!, plot_graph,
     SGNativeFormat, SGJLDFormat, SGBSONFormat

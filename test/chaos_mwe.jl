@@ -47,13 +47,13 @@ function initial_conditions(alg::SecondAlg)
 end
 
 
-dep = (A=1,)=>(D=0.4,)=>(B=0.55,)=>(E=10.,)=>(ic_alg=FirstAlg(2),)
+dep = ((A=1,),(D=0.4,),(B=0.55,),(E=10.,),(ic_alg=FirstAlg(2),))
 q₀, q₂ = initial_conditions(FirstAlg(2))
-add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
+add_nodes!(g, foldr(=>, (dep..., (q₀=q₀, q₂=q₂))))
 
-dep = (A=1,)=>(D=0.4,)=>(B=0.5,)=>(E=10.,)=>(ic_alg=SecondAlg(2, true),)
+dep = ((A=1,),(D=0.4,),(B=0.5,),(E=10.,),(ic_alg=SecondAlg(2, true),))
 q₀, q₂ = initial_conditions(SecondAlg(2, true))
-add_bulk!(g, dep, (q₀=q₀, q₂=q₂))
+add_nodes!(g, foldr(=>, (dep..., (q₀=q₀, q₂=q₂))))
 
 plot_graph(g)
 
@@ -88,7 +88,7 @@ ic = (q₀=q₀, q₂=q₂)
 l = (l=sim1(q₀, q₂, Alg1()),)
 l_alg = (alg=Alg1(),)
 
-add_derived_values!(g, ic_dep, ic, l, l_alg)
+add_nodes!(g, foldr(=>, (ic_dep..., ic, l, l_alg)))
 
 plot_graph(g)
 

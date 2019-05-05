@@ -9,7 +9,7 @@ function getindex(g::StorageGraph, dep::Pair)
     (lastn, cpaths), t = @timed walkdep(g, dep)
     @debug "Finding last node on path took $t seconds."
     if lastn == endof(dep) && length(cpaths) ≠ 0
-        neighbors = outneighbors(g, g[lastn])
+        neighbors = outneighbors(g, lastn)
         mask = Vector{Bool}(undef, length(neighbors))
         @threads for i in eachindex(neighbors)
             mask[i] = on_path(g, neighbors[i], cpaths)
@@ -20,13 +20,13 @@ function getindex(g::StorageGraph, dep::Pair)
     end
 end
 
-function getindex(g::StorageGraph, dep::Pair, name::Symbol)
+function getindex(g::StorageGraph, name::Symbol, dep::Pair)
     get.(get_prop.(Ref(g), g[dep]), name, nothing)
 end
 
 function getindex(g::StorageGraph, conditions::Dict{Symbol,F}, nodes::Vararg{NamedTuple}) where {F<:Function}
     paths = filter_paths(g, nodes, conditions)
-    vs = Iterators.filter(v->on_path(g,v,paths), outneighbors(g, g[nodes[end]]))
+    vs = Iterators.filter(v->on_path(g,v,paths), outneighbors(g, nodes[end]))
     get_prop.(Ref(g), vs)
 end
 
@@ -74,37 +74,51 @@ getindex(g::StorageGraph) = []
 Return a vector of the paths going through the given vertex. If `dir` is specified,
 use the corresponding edge direction (`:in` and `:out` are acceptable values).
 """
-function paths_through(g, v::Integer; dir=:out)
-    v == 0 && return Set{eltype(g)}()
+paths_through(g, v; dir=:out) = paths_through!(Set{eltype(g)}(), g, v, dir=dir)
+
+function paths_through!(paths, g, v::Integer; dir=:out)
+    v == 0 && return paths
     if dir == :out
         out = outneighbors(g, v)
         if isempty(out)
-            return Set{eltype(g)}()
+            return paths
         else
             es = [Edge(v, i) for i in out]
         end
-    else
+    elseif dir == :in
         in = inneighbors(g, v)
         if isempty(in)
-            return Set{eltype(g)}()
+            return paths
         else
             es = [Edge(i, v) for i in in]
         end
+    else
+        in = inneighbors(g, v)
+        out = outneighbors(g, v)
+        l = length(in)
+        n = l + length(out)
+        n == 0 && return paths
+        es = Vector{Edge}(undef, n)
+        for i in eachindex(in)
+            es[i] = Edge(in[i], v)
+        end
+        for i in eachindex(out)
+            es[i+l] = Edge(v, out[i])
+        end
     end
-    paths = Set{eltype(g)}()
     for e in es
         union!(paths, g.paths[e])
     end
     return paths
 end
 
-function paths_through(g, dep::Pair; dir=:out)
-    intersect!(paths_through(g, dep[2], dir=dir), paths_through(g, dep[1], dir=dir))
+function paths_through!(paths, g, dep::Pair; dir=:out)
+    intersect!(paths_through!(Set{eltype(g)}(), g, dep[2], dir=dir), paths_through!(paths, g, dep[1], dir=dir))
 end
 
-function paths_through(g, node::NamedTuple; dir=:out)
-    !haskey(g.index, node) && return Set{eltype(g)}()
-    paths_through(g, g[node], dir=dir)
+function paths_through!(paths, g, node::NamedTuple; dir=:out)
+    !haskey(g.index, node) && return paths
+    paths_through!(paths, g, g[node], dir=dir)
 end
 
 """

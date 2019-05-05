@@ -26,20 +26,13 @@ draw_graph(g, 10, 4, "ex1")
 #     add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
 # end
 
-@test_logs((:debug, (x = 1,) => (y = 1,)),
-           (:debug, "Paths compatible with the dependency chain"),
-           (:debug, (x = 2,) => (y = 4,)),
-           (:debug, "Paths compatible with the dependency chain"),
-           (:debug, (x = 3,) => (y = 9,)),
-           (:debug, "Paths compatible with the dependency chain"),
-    min_level=Logging.Debug, match_mode=:all,
-    add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],)))
+g = StorageGraph()
+add_nodes!(g, (x=[1,2,3],)=>(y=[1,4,9],))
 
-@test nv(g) == 6
-@test ne(g) == 3
-@test get_prop(g, 4) == (y=1,)
-@test get_prop(g, 5) == (y=4,)
-@test get_prop(g, 6) == (y=9,)
+@test nv(g) == 2
+@test ne(g) == 1
+@test get_prop(g, 1) == (x=[1,2,3],)
+@test get_prop(g, 2) == (y=[1,4,9],)
 
 draw_graph(g, 10, 4, "ex2", C=8)
 
@@ -48,11 +41,11 @@ draw_graph(g, 10, 4, "ex2", C=8)
 using StorageGraphs
 
 g = StorageGraph()
-add_derived_values!(g, (x=[1,2,3],), (y=[1,4,9],))
+add_nodes!(g, (x=[1,2,3],)=>(y=[1,4,9],))
 
 ###
 
-@test isempty(setdiff(g[:x], [1,2,3]))
+@test isempty(setdiff(g[:x][1], [1,2,3]))
 
 ###
 
@@ -60,23 +53,23 @@ using StorageGraphs
 
 g = StorageGraph()
 
-# We can add the nodes one by one
-add_nodes!(g, (P=1,)=>(alg="alg1",))
-# or in bulk
-add_bulk!(g, (P=1,)=>(alg="alg1",), (x=[10., 20., 30.],))
+add_nodes!(g, (P=1,)=>(alg="alg1",)=>(x=[10., 20., 30.],))
 
 draw_graph(g, 10, 4, "ic_graph", C=8)
 
 simulation(x; alg) = alg == "alg1" ? x.+2 : x.^2
 
 # retrieve the previously stored initial conditions
-x = g[(P=1,)=>(alg="alg1",), :x]
+x = g[:x, (P=1,)=>(alg="alg1",)][1]
+# there is only one node depending on (P=1,)=>(alg="alg1",), so that's why
+# we take only the first element
 results = simulation(x, alg="alg1")
-add_derived_values!(g, ((P=1,),(alg="alg1",)), (x=x,), (r=results,))
+add_nodes!(g, foldr(=>, ((P=1,), (alg="alg1",), (x=x,), (r=results,))))
+# foldr(=>, dep) can be useful for building long dependency chanis form parts
 
 draw_graph(g, 10, 6, "sim_graph", C=8)
 
-add_derived_values!(g, ((P=2,),(alg="alg1",)), (x=2x,), (r=2results,))
+add_nodes!(g, foldr(=>,((P=2,), (alg="alg1",), (x=2x,), (r=2results,))))
 
 draw_graph(g, 11, 11, "complicated_graph", C=6)
 
