@@ -57,14 +57,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "add/#StorageGraphs.add_derived_values!-Tuple{Any,Any,NamedTuple,NamedTuple,Vararg{Any,N} where N}",
-    "page": "Adding data",
-    "title": "StorageGraphs.add_derived_values!",
-    "category": "method",
-    "text": "add_derived_values!(g, base_dep, base_vals, vals, inner_deps...)\n\nAdd multiple values such that the elements in base_vals and vals are linked in such a way that the order is preserved. This is useful when one wants to add a vector of values derived from another vector. The dependency for the base values (base_dep) must be given as a collection of NamedTuples instead of a nested Pair. Also, any inner dependencies (inner_deps) must be given as individual NamedTuples. A new path is created for each value, but if a part already exists, it is continued (see nextid).\n\n\n\n\n\n"
-},
-
-{
     "location": "add/#StorageGraphs.add_nodes!-Tuple{Any,Pair}",
     "page": "Adding data",
     "title": "StorageGraphs.add_nodes!",
@@ -121,7 +113,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "query/#StorageGraphs.paths_through-Tuple{Any,Integer}",
+    "location": "query/#StorageGraphs.paths_through-Tuple{Any,Any}",
     "page": "Querying the graph",
     "title": "StorageGraphs.paths_through",
     "category": "method",
@@ -222,14 +214,6 @@ var documenterSearchIndex = {"docs": [
     "title": "StorageGraphs.findnodes",
     "category": "method",
     "text": "findnodes(g, name::Symbol)\n\nFinds the nodes containing name.\n\n\n\n\n\n"
-},
-
-{
-    "location": "internals/#StorageGraphs.ordered_dependency-Tuple{Any,Any,Vararg{Any,N} where N}",
-    "page": "Internals",
-    "title": "StorageGraphs.ordered_dependency",
-    "category": "method",
-    "text": "ordered_dependency(a, b, inner_deps...)\n\nReturn a vector of dependency chains such that the elements of a are linked to the ones in b in such a way that the order is preserved.\n\n\n\n\n\n"
 },
 
 {
