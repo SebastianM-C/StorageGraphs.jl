@@ -11,7 +11,10 @@ function add_nodes!(g, dep::Pair; id=nextid(g, dep))
         dest = add_nodes!(g, dep[2], id=id)
     else
         dest = dep[2]
-        set_prop!(g, id+1)
+        if id == get_prop(g)
+            # We are on a new path
+            set_prop!(g, id+1)
+        end
     end
     add_path!(g, dep[1], dest, id=id)
 

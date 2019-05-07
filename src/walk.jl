@@ -11,9 +11,12 @@ function nextid(g, dep::Pair)
     dep_end, cpaths = walkdep(g, dep)
     @debug "Paths compatible with the dependency chain" dep_end, cpaths
     !haskey(g.index, dep_end) && return get_prop(g)
+    @debug "Last node on dependency chain found in index"
     v = g[dep_end]
     length(cpaths) == 0 && return get_prop(g)
+    @debug "The number of compatible paths is not 0"
     if outdegree(g, v) > 0
+        @debug "Not a dead end. Asigning path $(get_prop(g))"
         return get_prop(g)
     else
         neighbors = inneighbors(g, v)
